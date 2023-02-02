@@ -1,20 +1,19 @@
-package com.example.medicatrack.model;
+package com.example.medicatrack.repo.persist.entities;
 
-import com.example.medicatrack.model.enums.Frecuencia;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
-public class Medicamento
+@Entity
+public class MedicamentoEntity
 {
-    private final int id;
+    @PrimaryKey(autoGenerate = true) private int id;
     private String nombre;
     private String color;
     private String forma;
     private float concentracion;
-    private Frecuencia frecuencia;
+    private String frecuencia;
 
-    public Medicamento(int id)
-    {
-        this.id = id;
-    }
+    public void setId(int id){this.id = id;}
 
     public int getId()
     {
@@ -53,13 +52,11 @@ public class Medicamento
         this.concentracion = concentracion;
     }
 
-    public Frecuencia getFrecuencia() {
+    public String getFrecuencia() {
         return frecuencia;
     }
 
-    public void setFrecuencia(Frecuencia frecuencia) {
+    public void setFrecuencia(String frecuencia) {
         this.frecuencia = frecuencia;
     }
 }
-
-
