@@ -10,6 +10,15 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.medicatrack.databinding.FragmentFirstBinding;
+import com.example.medicatrack.model.Medicamento;
+import com.example.medicatrack.model.Registro;
+import com.example.medicatrack.model.enums.Frecuencia;
+import com.example.medicatrack.model.enums.RegistroEstado;
+import com.example.medicatrack.repo.persist.impl.MedicamentoRoomDataSource;
+import com.example.medicatrack.repo.persist.impl.RegistroRoomDataSource;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public class FirstFragment extends Fragment {
 

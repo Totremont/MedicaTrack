@@ -34,6 +34,7 @@ public abstract class Database extends RoomDatabase
                 .fallbackToDestructiveMigration()
                 .enableMultiInstanceInvalidation()  //Si 2 o más instancias se estan ejecutando en hilos o procesos separados,
                                                     // este método bloquea los recursos compartidos cuando una instancia los está usando.
+                .allowMainThreadQueries()
                 .build();
     }
 
