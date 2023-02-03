@@ -1,16 +1,15 @@
 package com.example.medicatrack;
 
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.medicatrack.databinding.ActivityMainBinding;
+import com.google.android.material.snackbar.Snackbar;
 
 import android.view.Menu;
 import android.view.MenuItem;

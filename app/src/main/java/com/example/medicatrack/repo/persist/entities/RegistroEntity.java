@@ -16,10 +16,10 @@ import java.sql.Timestamp;
     --Se puede consultar en: https://www.epochconverter.com/timezones--
 
     ZonedDateTime es equivalente a LocalDateTime (tiene todas sus lindas funciones), pero con un uso horario que se puede definir, lo cual nos permite saber qué hora representa para Argentina un Instant sin ambiguedad.
-    Entonces, como SQL no entiende ZonedDateTime ni Instant, hacemos las siguientes conversiones sencillas:
+    Room no entiende ni Timestamp ni ZonedDateTime, pero como Timestamp se puede representar como un Long, hacemos las siguientes conversiones:
 
-    Si deseo convertir de ZonedDateTime a columna SQL: Timestamp.fromInstant(ZonedDateTime.toInstant);
-    Si deseo convertir de Timestamp a mi querida ZonedDateTime: ZonedDateTime.ofInstant(timestamp.toInstant , zoneId); zoneId = America/Argentina/Buenos_Aires
+    Si deseo convertir de ZonedDateTime a Long de Room: ZonedDateTime.toInstant().getEpochSeconds();
+    Si deseo convertir de Long a mi querida ZonedDateTime: ZonedDateTime.ofInstant(Instant.ofEpochSeconds(long) , zoneId); zoneId = America/Argentina/Buenos_Aires
 
     Y listo.
 
@@ -33,7 +33,7 @@ public class RegistroEntity
 {
     @PrimaryKey(autoGenerate = true) private int id;
     @ColumnInfo(name="medicamento_id") private int medicaId;
-    private java.sql.Timestamp fecha;
+    private Long fecha;
     private String estado;
 
     public void setId(int id){this.id = id;}
@@ -50,11 +50,11 @@ public class RegistroEntity
         this.medicaId = medicaId;
     }
 
-    public Timestamp getFecha() {
+    public Long getFecha() {
         return fecha;
     }
 
-    public void setFecha(Timestamp fecha) {
+    public void setFecha(Long fecha) {
         this.fecha = fecha;
     }
 

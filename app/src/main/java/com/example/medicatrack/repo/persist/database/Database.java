@@ -10,7 +10,7 @@ import com.example.medicatrack.repo.persist.database.daos.RegistroDao;
 import com.example.medicatrack.repo.persist.entities.MedicamentoEntity;
 import com.example.medicatrack.repo.persist.entities.RegistroEntity;
 
-@androidx.room.Database(entities = {MedicamentoEntity.class, RegistroEntity.class},version = 1)
+@androidx.room.Database(entities = {MedicamentoEntity.class, RegistroEntity.class},version = 1,exportSchema = false)
 
 public abstract class Database extends RoomDatabase
 {

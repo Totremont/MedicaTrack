@@ -12,6 +12,7 @@ import com.example.medicatrack.repo.persist.interfaces.CallbacksDataSource;
 import com.example.medicatrack.repo.persist.interfaces.RegistroDataSource;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -43,7 +44,7 @@ public class RegistroRoomDataSource implements RegistroDataSource
         {
             RegistroEntity entity = new RegistroEntity();
             entity.setEstado(registro.getEstado().name());
-            entity.setFecha((Timestamp) Timestamp.from(registro.getFecha().toInstant()));
+            entity.setFecha(registro.getFecha().toInstant().getEpochSecond());
             entity.setMedicaId(registro.getMedicamento().getId());
             try
             {
@@ -71,7 +72,7 @@ public class RegistroRoomDataSource implements RegistroDataSource
             RegistroEntity entity = registroDao.getById(id);
             Registro registro = new Registro(entity.getId());
             registro.setEstado(RegistroEstado.valueOf(entity.getEstado()));
-            registro.setFecha(ZonedDateTime.ofInstant(entity.getFecha().toInstant(), ZoneId.of("America/Argentina/Buenos_Aires")));
+            registro.setFecha(ZonedDateTime.ofInstant(Instant.ofEpochSecond(entity.getFecha()),ZoneId.of("America/Argentina/Buenos_Aires")));
             final Medicamento[] medicamento = new Medicamento[1];
             MedicamentoRoomDataSource.getInstance(context).getById(entity.getMedicaId(),(result, value) ->
             {
