@@ -2,6 +2,9 @@ package com.example.medicatrack.model;
 
 import com.example.medicatrack.model.enums.Frecuencia;
 
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+
 public class Medicamento
 {
     private final int id;
@@ -10,7 +13,8 @@ public class Medicamento
     private String forma;
     private float concentracion;
     private Frecuencia frecuencia;
-
+    private String dias;
+    private ZonedDateTime hora;
     public Medicamento(int id)
     {
         this.id = id;
@@ -59,6 +63,22 @@ public class Medicamento
 
     public void setFrecuencia(Frecuencia frecuencia) {
         this.frecuencia = frecuencia;
+    }
+
+    public String getDias() {
+        return dias;
+    }
+
+    public void setDias(String dias) {
+        this.dias = dias;
+    }
+
+    public ZonedDateTime getHora() {
+        return hora;
+    }
+
+    public void setHora(ZonedDateTime hora) {
+        this.hora = hora;
     }
 }
 

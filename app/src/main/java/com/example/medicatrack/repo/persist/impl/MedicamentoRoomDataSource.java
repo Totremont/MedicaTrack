@@ -10,6 +10,10 @@ import com.example.medicatrack.repo.persist.entities.MedicamentoEntity;
 import com.example.medicatrack.repo.persist.interfaces.CallbacksDataSource;
 import com.example.medicatrack.repo.persist.interfaces.MedicamentoDataSource;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 
 public class MedicamentoRoomDataSource implements MedicamentoDataSource
 {
@@ -40,6 +44,8 @@ public class MedicamentoRoomDataSource implements MedicamentoDataSource
             entity.setForma(medicamento.getForma());
             entity.setNombre(medicamento.getNombre());
             entity.setFrecuencia(medicamento.getFrecuencia().name());
+            entity.setDias(medicamento.getDias());
+            entity.setHora(medicamento.getHora().toInstant().getEpochSecond());
             try
             {
                 medicamentoDao.insert(entity);
@@ -70,6 +76,8 @@ public class MedicamentoRoomDataSource implements MedicamentoDataSource
             medicamento.setFrecuencia(Frecuencia.valueOf(entity.getFrecuencia()));
             medicamento.setForma(entity.getForma());
             medicamento.setConcentracion(entity.getConcentracion());
+            medicamento.setDias(entity.getDias());
+            medicamento.setHora(ZonedDateTime.ofInstant(Instant.ofEpochSecond(entity.getHora()),ZoneId.of("America/Argentina/Buenos_Aires")));
             callback.onGetById(true,medicamento);
         } catch(Exception e)
         {
