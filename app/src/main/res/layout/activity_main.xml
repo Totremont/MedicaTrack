@@ -9,7 +9,8 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.MedicaTrack.AppBarOverlay">
+        android:theme="@style/Theme.MedicaTrack.AppBarOverlay"
+        android:id="@+id/app_bar">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -20,7 +21,17 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+    <fragment
+        android:id="@+id/nav_host_fragment_content_main"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_bar"
+        app:navGraph="@navigation/nav_graph" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
@@ -29,6 +40,9 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginBottom="16dp"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        android:tint="@color/white"
+        app:backgroundTint="@color/design_default_color_primary"
+        app:tint="@color/white"
+        app:srcCompat="@drawable/baseline_chevron_right_24" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

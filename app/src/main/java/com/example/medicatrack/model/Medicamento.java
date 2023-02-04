@@ -1,11 +1,18 @@
 package com.example.medicatrack.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import com.example.medicatrack.model.enums.Frecuencia;
 
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 
-public class Medicamento
+public class Medicamento implements Parcelable
 {
     private final int id;
     private String nombre;
@@ -80,6 +87,46 @@ public class Medicamento
     public void setHora(ZonedDateTime hora) {
         this.hora = hora;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.nombre);
+        dest.writeString(this.color);
+        dest.writeString(this.forma);
+        dest.writeFloat(this.concentracion);
+        dest.writeString(this.frecuencia.name());
+        dest.writeString(this.dias);
+        dest.writeLong(this.hora.toInstant().getEpochSecond());
+    }
+
+    private Medicamento(Parcel in){
+        this.id = in.readInt();
+        this.nombre = in.readString();
+        this.color = in.readString();
+        this.forma = in.readString();
+        this.concentracion = in.readFloat();
+        this.frecuencia = Frecuencia.valueOf(in.readString());
+        this.dias = in.readString();
+        this.hora = ZonedDateTime.ofInstant(Instant.ofEpochSecond(in.readLong()), ZoneId.of("America/Argentina/Buenos_Aires"));
+    }
+
+    public static final Parcelable.Creator<Medicamento> CREATOR  = new Parcelable.Creator<Medicamento>() {
+        @Override
+        public Medicamento createFromParcel(Parcel source) {
+            return new Medicamento(source);
+        }
+
+        @Override
+        public Medicamento[] newArray(int size) {
+            return new Medicamento[0];
+        }
+    };
 }
 
 

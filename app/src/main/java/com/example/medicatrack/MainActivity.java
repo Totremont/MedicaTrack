@@ -1,18 +1,28 @@
 package com.example.medicatrack;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.medicatrack.databinding.ActivityMainBinding;
+import com.example.medicatrack.model.Medicamento;
+import com.example.medicatrack.repo.persist.database.Database;
 import com.google.android.material.snackbar.Snackbar;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,8 +42,27 @@ public class MainActivity extends AppCompatActivity {
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
-        binding.fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
+
+        // Obtener resultado de la otra actividad
+        ActivityResultLauncher<Intent> creacionLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            Intent data = result.getData();
+                            Medicamento a = data.getExtras().getParcelable("Medicamento");
+                            System.out.println("HOLA");
+                        }
+                    }
+                });
+
+        // Boton flotante, lleva a la actividad de Creacion
+        binding.fab.setOnClickListener(view -> {
+            Intent intent = new Intent(this, CreacionActivity.class);
+            creacionLauncher.launch(intent);
+        });
     }
 
     @Override
@@ -63,5 +92,12 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Cerrar la conexion de la base de datos
+        Database.getInstance(getApplicationContext()).close();
+        super.onDestroy();
     }
 }
