@@ -22,6 +22,7 @@ public class Medicamento implements Parcelable
     private Frecuencia frecuencia;
     private String dias;
     private ZonedDateTime hora;
+    private String descripcion;
     public Medicamento(int id)
     {
         this.id = id;
@@ -88,6 +89,14 @@ public class Medicamento implements Parcelable
         this.hora = hora;
     }
 
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -103,6 +112,7 @@ public class Medicamento implements Parcelable
         dest.writeString(this.frecuencia.name());
         dest.writeString(this.dias);
         dest.writeLong(this.hora.toInstant().getEpochSecond());
+        dest.writeString(this.descripcion);
     }
 
     private Medicamento(Parcel in){
@@ -114,6 +124,7 @@ public class Medicamento implements Parcelable
         this.frecuencia = Frecuencia.valueOf(in.readString());
         this.dias = in.readString();
         this.hora = ZonedDateTime.ofInstant(Instant.ofEpochSecond(in.readLong()), ZoneId.of("America/Argentina/Buenos_Aires"));
+        this.descripcion = in.readString();
     }
 
     public static final Parcelable.Creator<Medicamento> CREATOR  = new Parcelable.Creator<Medicamento>() {

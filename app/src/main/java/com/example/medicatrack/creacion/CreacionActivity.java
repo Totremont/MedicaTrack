@@ -1,6 +1,7 @@
-package com.example.medicatrack;
+package com.example.medicatrack.creacion;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -12,6 +13,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.medicatrack.R;
+import com.example.medicatrack.creacion.viewmodels.CreacionViewModel;
 import com.example.medicatrack.databinding.ActivityCreacionBinding;
 import com.example.medicatrack.model.Medicamento;
 import com.example.medicatrack.model.enums.Frecuencia;
@@ -22,6 +25,7 @@ public class CreacionActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityCreacionBinding binding;
+    private CreacionViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +38,29 @@ public class CreacionActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_creacion);
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+
+        // Manejo de cambio de valor en el nombre, forma y concentracion
+        viewModel = new ViewModelProvider(this).get(CreacionViewModel.class);
+        // Cambio del nombre
+        viewModel.getNombreMed().observe(this, nombre -> {
+            binding.toolbarCreacion.setTitle(nombre==null?"Medicamento":nombre);
+        });
+        // Cambio de la concentracion
+        viewModel.getConcentracion().observe(this, concentracion -> {
+            crearSubtitulo(viewModel.getForma().getValue(), concentracion);
+        });
+        // Cambio de la forma
+        viewModel.getForma().observe(this, forma -> {
+            crearSubtitulo(forma, viewModel.getConcentracion().getValue());
+        });
+    }
+
+    private void crearSubtitulo(String forma, Float concentracion){
+        String subtitulo = "";
+        if(forma == null && concentracion != null) subtitulo = concentracion.toString();
+        if(forma != null && concentracion == null) subtitulo = forma;
+        if(forma != null && concentracion != null) subtitulo = forma + ", " + concentracion.toString();
+        binding.toolbarCreacion.setSubtitle(subtitulo);
     }
 
     @Override

@@ -8,7 +8,7 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-    <string name="agregar">Agregar medicamento</string>
+    <string name="medicamento">Medicamento</string>
 
 
     <string name="hello_first_fragment">Hello first fragment</string>

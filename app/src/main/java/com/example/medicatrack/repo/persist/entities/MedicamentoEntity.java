@@ -14,6 +14,7 @@ public class MedicamentoEntity
     private String frecuencia;
     private String dias;
     private Long hora;
+    private String descripcion;
 
     public void setId(int id){this.id = id;}
 
@@ -76,5 +77,13 @@ public class MedicamentoEntity
 
     public void setHora(Long hora) {
         this.hora = hora;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 }

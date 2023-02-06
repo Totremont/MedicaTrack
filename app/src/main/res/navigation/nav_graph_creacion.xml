@@ -7,8 +7,8 @@
 
     <fragment
         android:id="@+id/datosMedicamentoFragment"
-        android:name="com.example.medicatrack.DatosMedicamentoFragment"
-        android:label="@string/agregar"
+        android:name="com.example.medicatrack.creacion.DatosMedicamentoFragment"
+        android:label="@string/medicamento"
         tools:layout="@layout/fragment_datos_medicamento" >
         <action
             android:id="@+id/action_datosMedicamentoFragment_to_frecuenciaMedicamentoFragment"
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/frecuenciaMedicamentoFragment"
-        android:name="com.example.medicatrack.FrecuenciaMedicamentoFragment"
-        android:label="@string/agregar"
+        android:name="com.example.medicatrack.creacion.FrecuenciaMedicamentoFragment"
+        android:label="@string/medicamento"
         tools:layout="@layout/fragment_frecuencia_medicamento" />
 </navigation>

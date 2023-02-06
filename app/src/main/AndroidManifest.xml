@@ -14,7 +14,7 @@
         android:theme="@style/Theme.MedicaTrack"
         tools:targetApi="31">
         <activity
-            android:name=".CreacionActivity"
+            android:name=".creacion.CreacionActivity"
             android:exported="false"
             android:theme="@style/Theme.MedicaTrack.NoActionBar"/>
         <activity

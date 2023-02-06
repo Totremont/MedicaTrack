@@ -46,6 +46,7 @@ public class MedicamentoRoomDataSource implements MedicamentoDataSource
             entity.setFrecuencia(medicamento.getFrecuencia().name());
             entity.setDias(medicamento.getDias());
             entity.setHora(medicamento.getHora().toInstant().getEpochSecond());
+            entity.setDescripcion(medicamento.getDescripcion());
             try
             {
                 medicamentoDao.insert(entity);
@@ -78,6 +79,7 @@ public class MedicamentoRoomDataSource implements MedicamentoDataSource
             medicamento.setConcentracion(entity.getConcentracion());
             medicamento.setDias(entity.getDias());
             medicamento.setHora(ZonedDateTime.ofInstant(Instant.ofEpochSecond(entity.getHora()),ZoneId.of("America/Argentina/Buenos_Aires")));
+            medicamento.setDescripcion(entity.getDescripcion());
             callback.onGetById(true,medicamento);
         } catch(Exception e)
         {

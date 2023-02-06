@@ -1,4 +1,4 @@
-package com.example.medicatrack;
+package com.example.medicatrack.creacion;
 
 import android.os.Bundle;
 
@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.medicatrack.R;
 
 public class FrecuenciaMedicamentoFragment extends Fragment {
 
