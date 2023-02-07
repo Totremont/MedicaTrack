@@ -8,7 +8,7 @@ android {
     defaultConfig {
         applicationId "com.example.medicatrack"
         minSdk 26
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -34,6 +34,7 @@ android {
 ext {
     room_version = "2.5.0"
     material_version = "1.8.0"
+    viewmodel_version = "2.5.1"
 }
 
 dependencies {
@@ -42,6 +43,10 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:2.0.4'
     implementation 'android.arch.navigation:navigation-fragment:1.0.0'
     implementation 'android.arch.navigation:navigation-ui:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.navigation:navigation-fragment:2.5.3'
+    implementation 'androidx.navigation:navigation-ui:2.5.3'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
@@ -51,5 +56,13 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:$room_version")
     //-Material Design
     implementation ("com.google.android.material:material:$material_version")
+    //-Viewmodel y lifecycle
+    implementation ("androidx.lifecycle:lifecycle-viewmodel:$viewmodel_version")
 
+}
+
+configurations {
+    all {
+        exclude group: 'androidx.lifecycle', module: 'lifecycle-viewmodel-ktx'
+    }
 }
