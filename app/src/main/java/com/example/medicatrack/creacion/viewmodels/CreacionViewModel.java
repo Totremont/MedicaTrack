@@ -11,13 +11,18 @@ public class CreacionViewModel extends AndroidViewModel {
 
     private MutableLiveData<String> nombreMed;
     private MutableLiveData<Float> concentracion;
+    private MutableLiveData<String> unidad;
     private MutableLiveData<String> forma;
+    private MutableLiveData<String> color;
+    private String descripcion;
 
     public CreacionViewModel(@NonNull Application application) {
         super(application);
         nombreMed = new MutableLiveData<String>();
         concentracion = new MutableLiveData<Float>();
         forma = new MutableLiveData<String>();
+        color = new MutableLiveData<String>();
+        unidad = new MutableLiveData<String>();
     }
 
     public LiveData<String> getNombreMed() {
@@ -32,6 +37,10 @@ public class CreacionViewModel extends AndroidViewModel {
         return forma;
     }
 
+    public LiveData<String> getUnidad() {
+        return unidad;
+    }
+
     public void setNombreMed(String nombreMed) {
         this.nombreMed.postValue(nombreMed);
     }
@@ -42,5 +51,23 @@ public class CreacionViewModel extends AndroidViewModel {
 
     public void setForma(String forma) {
         this.forma.postValue(forma);
+    }
+    public LiveData<String> getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color.postValue(color);
+    }
+    public void setUnidad(String unidad) {
+        this.unidad.postValue(unidad);
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 }

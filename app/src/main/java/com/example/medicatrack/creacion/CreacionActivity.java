@@ -14,12 +14,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.medicatrack.R;
+import com.example.medicatrack.creacion.enums.Color;
 import com.example.medicatrack.creacion.viewmodels.CreacionViewModel;
 import com.example.medicatrack.databinding.ActivityCreacionBinding;
-import com.example.medicatrack.model.Medicamento;
-import com.example.medicatrack.model.enums.Frecuencia;
 
-import java.time.ZonedDateTime;
 
 public class CreacionActivity extends AppCompatActivity {
 
@@ -39,27 +37,34 @@ public class CreacionActivity extends AppCompatActivity {
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
-        // Manejo de cambio de valor en el nombre, forma y concentracion
+
+        // View model para el manejo de cambio de valor en el nombre, forma y concentracion
         viewModel = new ViewModelProvider(this).get(CreacionViewModel.class);
+
         // Cambio del nombre
         viewModel.getNombreMed().observe(this, nombre -> {
-            binding.toolbarCreacion.setTitle(nombre==null?"Medicamento":nombre);
+            binding.toolbarCreacion.setTitle(nombre.equals("")?"Medicamento":nombre);
         });
         // Cambio de la concentracion
         viewModel.getConcentracion().observe(this, concentracion -> {
-            crearSubtitulo(viewModel.getForma().getValue(), concentracion);
+            crearSubtitulo(viewModel.getForma().getValue(), concentracion, viewModel.getUnidad().getValue());
         });
         // Cambio de la forma
         viewModel.getForma().observe(this, forma -> {
-            crearSubtitulo(forma, viewModel.getConcentracion().getValue());
+            crearSubtitulo(forma, viewModel.getConcentracion().getValue(), viewModel.getUnidad().getValue());
         });
+        viewModel.getUnidad().observe(this, unidad -> {
+            crearSubtitulo(viewModel.getForma().getValue(), viewModel.getConcentracion().getValue(), viewModel.getUnidad().getValue());
+        });
+
     }
 
-    private void crearSubtitulo(String forma, Float concentracion){
+    private void crearSubtitulo(String forma, Float concentracion, String unidad){
+
         String subtitulo = "";
-        if(forma == null && concentracion != null) subtitulo = concentracion.toString();
-        if(forma != null && concentracion == null) subtitulo = forma;
-        if(forma != null && concentracion != null) subtitulo = forma + ", " + concentracion.toString();
+        if(forma == null && concentracion != null && unidad != null) subtitulo = concentracion + " " + unidad;
+        if(forma != null && (concentracion == null || (concentracion != null && unidad == null))) subtitulo = forma;
+        if(forma != null && concentracion != null && unidad != null) subtitulo = forma + ", " + concentracion + " "  + unidad;
         binding.toolbarCreacion.setSubtitle(subtitulo);
     }
 
