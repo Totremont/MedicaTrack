@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.MedicaTrack" parent="Theme.Material3.Light">
+    <style name="Theme.MedicaTrack" parent="Theme.Material3.Light.NoActionBar">
 
 
         <!-- Colores:  (1) https://m3.material.io/styles/color/the-color-system/color-roles
@@ -34,6 +34,17 @@
     <item name="colorOnSurfaceInverse">@color/md_theme_light_inverseOnSurface</item>
     <item name="colorSurfaceInverse">@color/md_theme_light_inverseSurface</item>
     <item name="colorPrimaryInverse">@color/md_theme_light_inversePrimary</item>
+    <item name="textAppearanceBodyLarge">@style/Theme.MedicaTrack.TitleText</item>
+    </style>
+    
+    <style name="Theme.MedicaTrack.TitleText" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.Medicatrack.cornedShape" parent="">
+        <item name="cornerSize">@dimen/small_dim</item>
+        <item name="cornerFamily">rounded</item>
 
     </style>
+
 </resources>

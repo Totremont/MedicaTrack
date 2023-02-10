@@ -1,6 +1,11 @@
 package com.example.medicatrack.model;
 
+import androidx.annotation.Nullable;
+
 import com.example.medicatrack.model.enums.Frecuencia;
+
+import java.time.ZonedDateTime;
+import java.util.Objects;
 
 public class Medicamento
 {
@@ -9,7 +14,14 @@ public class Medicamento
     private String color;
     private String forma;
     private float concentracion;
+
     private Frecuencia frecuencia;
+
+    private String dias;
+
+    private ZonedDateTime hora;
+
+    private String descripcion;
 
     public Medicamento(int id)
     {
@@ -59,6 +71,43 @@ public class Medicamento
 
     public void setFrecuencia(Frecuencia frecuencia) {
         this.frecuencia = frecuencia;
+    }
+
+    public String getDias() {
+        return dias;
+    }
+
+    public void setDias(String dias) {
+        this.dias = dias;
+    }
+
+    public ZonedDateTime getHora() {
+        return hora;
+    }
+
+    public void setHora(ZonedDateTime hora) {
+        this.hora = hora;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Medicamento that = (Medicamento) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
 

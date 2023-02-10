@@ -3,13 +3,16 @@
     <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_constraintTop_toBottomOf="@id/divider"
+    app:layout_constraintStart_toStartOf="parent"
     android:background="?attr/colorSurface"
     android:layout_width="match_parent"
-    android:layout_margin="@dimen/default_dim"
+    android:animateLayoutChanges="true"
+    android:layout_marginBottom="@dimen/default_dim"
     android:layout_height="wrap_content">
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/time_TextView"
+        android:id="@+id/tiempo_TextView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_width="wrap_content"
@@ -20,37 +23,37 @@
         />
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/icon_pending"
+        android:id="@+id/icon_pendiente"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/time_TextView"
+        app:layout_constraintTop_toBottomOf="@id/tiempo_TextView"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="@dimen/small_dim"
         android:src="@drawable/icon_pending_checked"/>
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/icon_cancel"
+        android:id="@+id/icon_no_tomado"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/time_TextView"
-        app:layout_constraintEnd_toStartOf="@id/icon_pending"
+        app:layout_constraintTop_toBottomOf="@id/tiempo_TextView"
+        app:layout_constraintEnd_toStartOf="@id/icon_pendiente"
         android:layout_marginEnd="@dimen/small_dim"
         android:layout_marginTop="@dimen/small_dim"
         android:src="@drawable/icon_close_unchecked"/>
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/icon_check"
+        android:id="@+id/icon_tomado"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/time_TextView"
-        app:layout_constraintEnd_toStartOf="@id/icon_cancel"
+        app:layout_constraintTop_toBottomOf="@id/tiempo_TextView"
+        app:layout_constraintEnd_toStartOf="@id/icon_no_tomado"
         android:layout_marginEnd="@dimen/small_dim"
         android:layout_marginTop="@dimen/small_dim"
         android:src="@drawable/icon_check_unchecked"/>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/icon_medicamento"
-        app:layout_constraintTop_toBottomOf="@id/time_TextView"
+        app:layout_constraintTop_toBottomOf="@id/tiempo_TextView"
         app:layout_constraintStart_toStartOf="parent"
         android:src="@drawable/icon_pending_checked"
         android:layout_marginTop="@dimen/small_dim"
@@ -58,10 +61,10 @@
         android:layout_height="40dp"/>
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/name_textView"
+        android:id="@+id/nombre_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/time_TextView"
+        app:layout_constraintTop_toBottomOf="@id/tiempo_TextView"
         app:layout_constraintStart_toEndOf="@id/icon_medicamento"
         android:layout_marginTop="@dimen/small_dim"
         android:layout_marginStart="@dimen/small_dim"
@@ -79,7 +82,7 @@
         android:textAppearance="?attr/textAppearanceBodyMedium"
         android:textColor="?attr/colorOnSurfaceVariant"
         app:layout_constraintStart_toEndOf="@id/icon_medicamento"
-        app:layout_constraintTop_toBottomOf="@id/name_textView" />
+        app:layout_constraintTop_toBottomOf="@id/nombre_textView" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/estado_textView"
@@ -108,32 +111,35 @@
         app:layout_constraintTop_toBottomOf="@id/arrow"/>
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider"
         android:gravity="center"
+        android:visibility="gone"
         android:layout_margin="@dimen/small_dim">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/option1_button"
+            android:id="@+id/tomar_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tomar"/>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/option2_button"
+            android:id="@+id/no_tomar_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/small_dim"
             android:text="No tomar"/>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/option3_button"
+            android:id="@+id/pendiente_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/small_dim"
-            android:text="Cancelar"/>
+            android:visibility="gone"
+            android:text="Pendiente"/>
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>

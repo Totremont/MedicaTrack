@@ -3,6 +3,8 @@ package com.example.medicatrack.repo.persist.entities;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.time.ZonedDateTime;
+
 @Entity
 public class MedicamentoEntity
 {
@@ -12,6 +14,13 @@ public class MedicamentoEntity
     private String forma;
     private float concentracion;
     private String frecuencia;
+
+    private String dias;
+
+    private Long hora;
+
+    private String descripcion;
+
 
     public void setId(int id){this.id = id;}
 
@@ -58,5 +67,29 @@ public class MedicamentoEntity
 
     public void setFrecuencia(String frecuencia) {
         this.frecuencia = frecuencia;
+    }
+
+    public String getDias() {
+        return dias;
+    }
+
+    public void setDias(String dias) {
+        this.dias = dias;
+    }
+
+    public Long getHora() {
+        return hora;
+    }
+
+    public void setHora(Long hora) {
+        this.hora = hora;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 }
