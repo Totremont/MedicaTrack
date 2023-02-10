@@ -11,24 +11,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import com.example.medicatrack.FirstFragment;
 import com.example.medicatrack.R;
-import com.example.medicatrack.creacion.enums.Color;
-import com.example.medicatrack.creacion.enums.Forma;
-import com.example.medicatrack.creacion.enums.Unidad;
+import com.example.medicatrack.model.enums.Color;
+import com.example.medicatrack.model.enums.Forma;
+import com.example.medicatrack.model.enums.Unidad;
 import com.example.medicatrack.creacion.utilities.FormaColorAdapter;
 import com.example.medicatrack.creacion.utilities.Utilities;
 import com.example.medicatrack.creacion.viewmodels.CreacionViewModel;
-import com.example.medicatrack.databinding.ActivityCreacionBinding;
 import com.example.medicatrack.databinding.FragmentDatosMedicamentoBinding;
-import com.example.medicatrack.databinding.FragmentFirstBinding;
-import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -132,12 +127,12 @@ public class DatosMedicamentoFragment extends Fragment {
         adapterColor = new FormaColorAdapter(this, Arrays.stream(Color.values()).collect(Collectors.toList()));
         recyclerViewColor.setAdapter(adapterColor);
 
+
         // Inicializar dropdown unidades
         List<Unidad> unidades = Arrays.stream(Unidad.values()).collect(Collectors.toList());
         List<String> unidadesStr = new ArrayList<>();
-        for (Unidad u: unidades) unidadesStr.add(u.toString());
-        unidadesStr.add("%");
-        ArrayAdapter<String> adapterUnidades = new ArrayAdapter<>(getContext(), R.layout.lista_unidades, R.id.txtUnidades,unidadesStr);
+        for (Unidad u: unidades) unidadesStr.add(u.toString() == "PORCENTAJE" ? "%" : u.toString().toLowerCase());
+        ArrayAdapter<String> adapterUnidades = new ArrayAdapter<>(getContext(), R.layout.lista_dropdown, R.id.txtLista,unidadesStr);
         binding.dropUnidad.setAdapter(adapterUnidades);
 
 

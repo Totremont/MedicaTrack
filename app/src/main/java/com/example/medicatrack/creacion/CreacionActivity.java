@@ -8,13 +8,11 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.medicatrack.R;
-import com.example.medicatrack.creacion.enums.Color;
 import com.example.medicatrack.creacion.viewmodels.CreacionViewModel;
 import com.example.medicatrack.databinding.ActivityCreacionBinding;
 
@@ -88,23 +86,6 @@ public class CreacionActivity extends AppCompatActivity {
             // Volver a la actividad principal
             setResult(Activity.RESULT_CANCELED);
             finish();
-            /*
-            Cuando se cree el medicamento, y se retorne a la actividad principal, hay que hacer esto
-
-            Medicamento med = new Medicamento(1);
-            med.setHora(ZonedDateTime.now());
-            med.setDias("1");
-            med.setForma("Redondo");
-            med.setNombre("Ibupirac");
-            med.setFrecuencia(Frecuencia.NECESIDAD);
-            med.setConcentracion(1.2f);
-            med.setColor("Rojo");
-            med.setHora(ZonedDateTime.now());
-
-            setResult(Activity.RESULT_OK, new Intent().putExtra("Medicamento", med));
-            finish();
-
-             */
             return true;
         }
 

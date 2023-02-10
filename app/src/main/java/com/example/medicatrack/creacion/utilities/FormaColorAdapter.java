@@ -1,10 +1,7 @@
 package com.example.medicatrack.creacion.utilities;
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -13,15 +10,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medicatrack.creacion.enums.Color;
-import com.example.medicatrack.creacion.enums.Forma;
+import com.example.medicatrack.model.enums.Color;
+import com.example.medicatrack.model.enums.Forma;
 import com.example.medicatrack.creacion.viewmodels.CreacionViewModel;
 import com.example.medicatrack.databinding.CardColorFormaBinding;
-import com.example.medicatrack.databinding.FragmentDatosMedicamentoBinding;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FormaColorAdapter extends RecyclerView.Adapter<FormaColorAdapter.FormaColorViewHolder>{
 
@@ -67,7 +61,8 @@ public class FormaColorAdapter extends RecyclerView.Adapter<FormaColorAdapter.Fo
     public void onBindViewHolder(@NonNull FormaColorAdapter.FormaColorViewHolder holder, int position) {
 
         // Setear texto
-        String texto = listaForma != null ? listaForma.get(position).toString() : listaColor.get(position).toString();
+        String textoMayus = listaForma != null ? listaForma.get(position).toString() : listaColor.get(position).toString();
+        String texto = Utilities.fisrtUpperOnly(textoMayus);
         holder.bindingCard.txtCard.setText(texto);
 
         // Setear imagen

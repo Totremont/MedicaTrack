@@ -2,6 +2,9 @@ package com.example.medicatrack.repo.persist.impl;
 
 import android.content.Context;
 
+import com.example.medicatrack.model.enums.Color;
+import com.example.medicatrack.model.enums.Forma;
+import com.example.medicatrack.model.enums.Unidad;
 import com.example.medicatrack.model.Medicamento;
 import com.example.medicatrack.model.enums.Frecuencia;
 import com.example.medicatrack.repo.persist.database.Database;
@@ -39,11 +42,13 @@ public class MedicamentoRoomDataSource implements MedicamentoDataSource
         else
         {
             MedicamentoEntity entity = new MedicamentoEntity();
-            entity.setColor(medicamento.getColor());
+            entity.setColor(medicamento.getColor().name());
             entity.setConcentracion(medicamento.getConcentracion());
-            entity.setForma(medicamento.getForma());
+            entity.setUnidad(medicamento.getUnidad().name());
+            entity.setForma(medicamento.getForma().name());
             entity.setNombre(medicamento.getNombre());
             entity.setFrecuencia(medicamento.getFrecuencia().name());
+            entity.setFechaInicio(medicamento.getFechaInicio().toInstant().getEpochSecond());
             entity.setDias(medicamento.getDias());
             entity.setHora(medicamento.getHora().toInstant().getEpochSecond());
             entity.setDescripcion(medicamento.getDescripcion());
@@ -72,12 +77,14 @@ public class MedicamentoRoomDataSource implements MedicamentoDataSource
         {
             MedicamentoEntity entity = medicamentoDao.getById(id);
             Medicamento medicamento = new Medicamento(entity.getId());
-            medicamento.setColor(entity.getColor());
+            medicamento.setColor(Color.valueOf(entity.getColor()));
             medicamento.setNombre(entity.getNombre());
             medicamento.setFrecuencia(Frecuencia.valueOf(entity.getFrecuencia()));
-            medicamento.setForma(entity.getForma());
+            medicamento.setForma(Forma.valueOf(entity.getForma()));
             medicamento.setConcentracion(entity.getConcentracion());
+            medicamento.setUnidad(Unidad.valueOf(entity.getUnidad()));
             medicamento.setDias(entity.getDias());
+            medicamento.setFechaInicio(ZonedDateTime.ofInstant(Instant.ofEpochSecond(entity.getFechaInicio()),ZoneId.of("America/Argentina/Buenos_Aires")));
             medicamento.setHora(ZonedDateTime.ofInstant(Instant.ofEpochSecond(entity.getHora()),ZoneId.of("America/Argentina/Buenos_Aires")));
             medicamento.setDescripcion(entity.getDescripcion());
             callback.onGetById(true,medicamento);

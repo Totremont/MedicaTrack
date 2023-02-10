@@ -12,7 +12,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:text="mg"
-        android:id="@+id/txtUnidades"
+        android:id="@+id/txtLista"
         android:textAppearance="?attr/textAppearanceSubtitle1"
         tools:ignore="MissingConstraints" />
 
