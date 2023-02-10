@@ -132,8 +132,8 @@ public class Medicamento implements Parcelable
         dest.writeString(this.unidad.name());
         dest.writeString(this.frecuencia.name());
         dest.writeString(this.dias);
-        dest.writeLong(this.fechaInicio.toInstant().getEpochSecond());
-        dest.writeLong(this.hora.toInstant().getEpochSecond());
+        dest.writeLong(this.fechaInicio != null ? this.fechaInicio.toInstant().getEpochSecond() : -1); // -1 porque Parcel trabaja con tipo de datos primitivos, y no puede ser null
+        dest.writeLong(this.hora != null ? this.hora.toInstant().getEpochSecond() : -1); // -1 porque Parcel trabaja con tipo de datos primitivos, y no puede ser null
         dest.writeString(this.descripcion);
     }
 
@@ -146,8 +146,8 @@ public class Medicamento implements Parcelable
         this.unidad = Unidad.valueOf(in.readString());
         this.frecuencia = Frecuencia.valueOf(in.readString());
         this.dias = in.readString();
-        this.fechaInicio = ZonedDateTime.ofInstant(Instant.ofEpochSecond(in.readLong()), ZoneId.of("America/Argentina/Buenos_Aires"));
-        this.hora = ZonedDateTime.ofInstant(Instant.ofEpochSecond(in.readLong()), ZoneId.of("America/Argentina/Buenos_Aires"));
+        this.fechaInicio = in.readLong() != -1 ? ZonedDateTime.ofInstant(Instant.ofEpochSecond(in.readLong()), ZoneId.of("America/Argentina/Buenos_Aires")) : null;
+        this.hora = in.readLong() != -1 ? ZonedDateTime.ofInstant(Instant.ofEpochSecond(in.readLong()), ZoneId.of("America/Argentina/Buenos_Aires")) : null;
         this.descripcion = in.readString();
     }
 

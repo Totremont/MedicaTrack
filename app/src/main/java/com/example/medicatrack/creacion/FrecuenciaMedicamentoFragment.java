@@ -149,7 +149,6 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
                 }
                 break;
                 case 3: { // Segun se necesite
-                    System.out.println("SEGUN SE NECESITE");
                     binding.contIntRegulares.contenedor.setVisibility(View.GONE);
                     binding.contDias.contDias.setVisibility(View.GONE);
                     binding.contFechaHora.contFechaHora.setVisibility(View.GONE);
@@ -168,7 +167,7 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
                 med.setColor(Color.valueOf(viewModel.getColor().getValue().toUpperCase()));
                 med.setForma(Forma.valueOf(viewModel.getForma().getValue().toUpperCase()));
                 med.setConcentracion(viewModel.getConcentracion().getValue());
-                med.setUnidad(Unidad.valueOf(viewModel.getUnidad().getValue().toUpperCase()));
+                med.setUnidad(viewModel.getUnidad().getValue().equals("%") ? Unidad.PORCENTAJE : Unidad.valueOf(viewModel.getUnidad().getValue().toUpperCase()));
                 med.setFrecuencia(Frecuencia.values()[frecSeleccionada]);
                 switch (frecSeleccionada) {
                     case 0: // Todos los dias
@@ -196,7 +195,7 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
                 // Guardar en la bd
                 MedicamentoRoomDataSource dataSource = MedicamentoRoomDataSource.getInstance(this.getContext());
                 dataSource.insert(med, result -> {
-                    if (result) { // Retornar a la actividad principañ
+                    if (result) { // Retornar a la actividad principal
                         getActivity().setResult(Activity.RESULT_OK, new Intent().putExtra("Medicamento", med));
                         getActivity().finish();
                     } else {

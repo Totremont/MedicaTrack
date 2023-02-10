@@ -48,9 +48,9 @@ public class MedicamentoRoomDataSource implements MedicamentoDataSource
             entity.setForma(medicamento.getForma().name());
             entity.setNombre(medicamento.getNombre());
             entity.setFrecuencia(medicamento.getFrecuencia().name());
-            entity.setFechaInicio(medicamento.getFechaInicio().toInstant().getEpochSecond());
+            entity.setFechaInicio(medicamento.getFechaInicio() != null ? medicamento.getFechaInicio().toInstant().getEpochSecond() : null);
             entity.setDias(medicamento.getDias());
-            entity.setHora(medicamento.getHora().toInstant().getEpochSecond());
+            entity.setHora(medicamento.getHora() != null ? medicamento.getHora().toInstant().getEpochSecond() : null);
             entity.setDescripcion(medicamento.getDescripcion());
             try
             {
@@ -84,8 +84,8 @@ public class MedicamentoRoomDataSource implements MedicamentoDataSource
             medicamento.setConcentracion(entity.getConcentracion());
             medicamento.setUnidad(Unidad.valueOf(entity.getUnidad()));
             medicamento.setDias(entity.getDias());
-            medicamento.setFechaInicio(ZonedDateTime.ofInstant(Instant.ofEpochSecond(entity.getFechaInicio()),ZoneId.of("America/Argentina/Buenos_Aires")));
-            medicamento.setHora(ZonedDateTime.ofInstant(Instant.ofEpochSecond(entity.getHora()),ZoneId.of("America/Argentina/Buenos_Aires")));
+            medicamento.setFechaInicio(entity.getFechaInicio() != null ? ZonedDateTime.ofInstant(Instant.ofEpochSecond(entity.getFechaInicio()),ZoneId.of("America/Argentina/Buenos_Aires")) : null);
+            medicamento.setHora(entity.getHora() != null ? ZonedDateTime.ofInstant(Instant.ofEpochSecond(entity.getHora()),ZoneId.of("America/Argentina/Buenos_Aires")) : null);
             medicamento.setDescripcion(entity.getDescripcion());
             callback.onGetById(true,medicamento);
         } catch(Exception e)
