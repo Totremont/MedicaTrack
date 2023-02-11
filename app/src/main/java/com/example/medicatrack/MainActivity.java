@@ -1,9 +1,15 @@
 package com.example.medicatrack;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -11,13 +17,12 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.medicatrack.adapters.MedicamentoAdapter;
 import com.example.medicatrack.databinding.ActivityMainBinding;
 import com.example.medicatrack.model.Medicamento;
-import com.example.medicatrack.model.enums.Frecuencia;
-import com.example.medicatrack.repo.MedicamentoRepository;
 import com.example.medicatrack.viewmodels.MedicamentoViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.example.medicatrack.creacion.CreacionActivity;
+import com.example.medicatrack.repo.persist.database.Database;
 
 import java.time.ZonedDateTime;
 
@@ -85,6 +90,27 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        // Obtener resultado de la otra actividad
+        ActivityResultLauncher<Intent> creacionLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            Intent data = result.getData();
+                            Medicamento a = data.getExtras().getParcelable("Medicamento");
+                            System.out.println("HOLA");
+                        }
+                    }
+                });
+
+        // Boton flotante, lleva a la actividad de Creacion
+        binding.fab.setOnClickListener(view -> {
+            Intent intent = new Intent(this, CreacionActivity.class);
+            creacionLauncher.launch(intent);
+        });
+
     }
 
     @Override
@@ -115,5 +141,12 @@ public class MainActivity extends AppCompatActivity {
         binding.fab.setVisibility(FloatingActionButton.GONE);
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Cerrar la conexion de la base de datos
+        Database.getInstance(getApplicationContext()).close();
+        super.onDestroy();
     }
 }

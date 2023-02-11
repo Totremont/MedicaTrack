@@ -2,6 +2,9 @@ package com.example.medicatrack.repo.persist.impl;
 
 import android.content.Context;
 
+import com.example.medicatrack.model.enums.Color;
+import com.example.medicatrack.model.enums.Forma;
+import com.example.medicatrack.model.enums.Unidad;
 import com.example.medicatrack.model.Medicamento;
 import com.example.medicatrack.model.enums.Frecuencia;
 import com.example.medicatrack.repo.persist.database.Database;
@@ -39,13 +42,15 @@ public class MedicamentoRoomDataSource implements MedicamentoDataSource
         else
         {
             MedicamentoEntity entity = new MedicamentoEntity();
-            entity.setColor(medicamento.getColor());
+            entity.setColor(medicamento.getColor().name());
             entity.setConcentracion(medicamento.getConcentracion());
-            entity.setForma(medicamento.getForma());
+            entity.setUnidad(medicamento.getUnidad().name());
+            entity.setForma(medicamento.getForma().name());
             entity.setNombre(medicamento.getNombre());
             entity.setFrecuencia(medicamento.getFrecuencia().name());
+            entity.setFechaInicio(medicamento.getFechaInicio() != null ? medicamento.getFechaInicio().toInstant().getEpochSecond() : null);
             entity.setDias(medicamento.getDias());
-            entity.setHora(medicamento.getHora().toEpochSecond());
+            entity.setHora(medicamento.getHora() != null ? medicamento.getHora().toInstant().getEpochSecond() : null);
             entity.setDescripcion(medicamento.getDescripcion());
             try
             {
@@ -72,14 +77,17 @@ public class MedicamentoRoomDataSource implements MedicamentoDataSource
         {
             MedicamentoEntity entity = medicamentoDao.getById(id);
             Medicamento medicamento = new Medicamento(entity.getId());
-            medicamento.setColor(entity.getColor());
+            medicamento.setColor(Color.valueOf(entity.getColor()));
             medicamento.setNombre(entity.getNombre());
             medicamento.setFrecuencia(Frecuencia.valueOf(entity.getFrecuencia()));
-            medicamento.setForma(entity.getForma());
+            medicamento.setForma(Forma.valueOf(entity.getForma()));
             medicamento.setConcentracion(entity.getConcentracion());
-            medicamento.setDescripcion(entity.getDescripcion());
+            medicamento.setUnidad(Unidad.valueOf(entity.getUnidad()));
             medicamento.setDias(entity.getDias());
-            medicamento.setHora(ZonedDateTime.ofInstant(Instant.ofEpochSecond(entity.getHora()), ZoneId.of("America/Argentina/Buenos_Aires")));
+            medicamento.setFechaInicio(entity.getFechaInicio() != null ? ZonedDateTime.ofInstant(Instant.ofEpochSecond(entity.getFechaInicio()),ZoneId.of("America/Argentina/Buenos_Aires")) : null);
+            medicamento.setHora(entity.getHora() != null ? ZonedDateTime.ofInstant(Instant.ofEpochSecond(entity.getHora()),ZoneId.of("America/Argentina/Buenos_Aires")) : null);
+            medicamento.setDescripcion(entity.getDescripcion());
+
             callback.onGetById(true,medicamento);
         } catch(Exception e)
         {

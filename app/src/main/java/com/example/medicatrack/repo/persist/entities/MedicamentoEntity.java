@@ -13,12 +13,11 @@ public class MedicamentoEntity
     private String color;
     private String forma;
     private float concentracion;
+    private String unidad;
     private String frecuencia;
-
     private String dias;
-
+    private Long fechaInicio;
     private Long hora;
-
     private String descripcion;
 
 
@@ -91,5 +90,21 @@ public class MedicamentoEntity
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public String getUnidad() {
+        return unidad;
+    }
+
+    public void setUnidad(String unidad) {
+        this.unidad = unidad;
+    }
+
+    public Long getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(Long fechaInicio) {
+        this.fechaInicio = fechaInicio;
     }
 }
