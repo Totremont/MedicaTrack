@@ -15,6 +15,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 public class RegistroRoomDataSource implements RegistroDataSource
 {
@@ -43,6 +44,7 @@ public class RegistroRoomDataSource implements RegistroDataSource
         else
         {
             RegistroEntity entity = new RegistroEntity();
+            entity.setId(registro.getId());
             entity.setEstado(registro.getEstado().name());
             entity.setFecha(registro.getFecha().toInstant().getEpochSecond());
             entity.setMedicaId(registro.getMedicamento().getId());
@@ -61,11 +63,28 @@ public class RegistroRoomDataSource implements RegistroDataSource
     @Override
     public void update(Registro registro, CallbacksDataSource.UpdateCallback callback)
     {
-        //To do
+        if(registro == null) callback.onUpdate(false);
+        else
+        {
+            RegistroEntity entity = new RegistroEntity();
+            entity.setId(registro.getId());
+            entity.setEstado(registro.getEstado().name());
+            entity.setFecha(registro.getFecha().toInstant().getEpochSecond());
+            entity.setMedicaId(registro.getMedicamento().getId());
+            try
+            {
+                registroDao.update(entity);
+                callback.onUpdate(true);
+
+            }catch (Exception e)
+            {
+                callback.onUpdate(false);
+            }
+        }
     }
 
     @Override
-    public void getById(int id, CallbacksDataSource.GetByIdCallback<Registro> callback)
+    public void getById(UUID id, CallbacksDataSource.GetByIdCallback<Registro> callback)
     {
         try
         {
@@ -94,13 +113,13 @@ public class RegistroRoomDataSource implements RegistroDataSource
     }
 
     @Override
-    public void getAllFrom(int medicamentoId, CallbacksDataSource.GetAllCallback<Registro> callback)
+    public void getAllFrom(UUID medicamentoId, CallbacksDataSource.GetAllCallback<Registro> callback)
     {
         //To do
     }
 
     @Override
-    public void getAllFromWhere(int medicamentoId, RegistroEstado estado, CallbacksDataSource.GetAllCallback<Registro> callback)
+    public void getAllFromWhere(UUID medicamentoId, RegistroEstado estado, CallbacksDataSource.GetAllCallback<Registro> callback)
     {
         //To do
     }

@@ -21,7 +21,7 @@ public interface RegistroDao
     void update(RegistroEntity registro);
 
     @Query("SELECT * FROM RegistroEntity WHERE id = :id")
-    RegistroEntity getById(int id);
+    RegistroEntity getById(UUID id);
 
     @Query("SELECT * FROM RegistroEntity WHERE (medicamento_id = :medicamentoId AND estado = :estado)")
     List<RegistroEntity> getAllFromWhere(UUID medicamentoId, String estado);

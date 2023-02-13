@@ -1,5 +1,6 @@
 package com.example.medicatrack.repo.persist.entities;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -32,14 +33,15 @@ import java.util.UUID;
 @Entity
 public class RegistroEntity
 {
-    @PrimaryKey(autoGenerate = true) private int id;
+    @NonNull
+    @PrimaryKey(autoGenerate = false) private UUID id;
     @ColumnInfo(name="medicamento_id") private UUID medicaId;
     private Long fecha;
     private String estado;
 
-    public void setId(int id){this.id = id;}
+    public void setId(UUID id){this.id = id;}
 
-    public int getId() {
+    public UUID getId() {
         return id;
     }
 

@@ -7,6 +7,7 @@ import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
+import android.os.Parcelable;
 
 import androidx.core.app.NotificationManagerCompat;
 
@@ -16,6 +17,7 @@ import com.example.medicatrack.model.enums.RegistroEstado;
 import com.example.medicatrack.receiver.RegistroReceiver;
 import com.example.medicatrack.repo.RegistroRepository;
 
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
@@ -33,24 +35,29 @@ public class MedicamentoService extends IntentService {
         if (intent != null) switch (intent.getAction()){
             case RegistroReceiver.REGISTRAR_TOMADO:
             case RegistroReceiver.REGISTRAR_NO_TOMADO: {
-                crearRegistro(intent.getParcelableExtra("Medicamento"), intent.getIntExtra("idNot",-1), intent.getAction());
+                actualizarRegistro(intent.getParcelableExtra("Registro"), intent.getIntExtra("idNot",-1), intent.getAction());
             } break;
-            case RegistroReceiver.NUEVA_ALARMA: crearAlarma(intent.getParcelableExtra("Medicamento")); break;
+            case RegistroReceiver.NUEVA_ALARMA: {
+                crearAlarma(intent.getParcelableExtra("Medicamento"));
+                crearRegistro(intent.getParcelableExtra("Medicamento"));
+            } break;
         }
         stopSelf(); // Detener el service
-
     }
 
-    private void crearRegistro(Medicamento medicamento, int idNotificacion, String action) {
+    private void actualizarRegistro(Registro registro, int idNotificacion, String action) {
 
-        Registro registro = new Registro(0);
-        registro.setMedicamento(medicamento);
-        registro.setFecha(ZonedDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
         if(action.equals(RegistroReceiver.REGISTRAR_TOMADO)) registro.setEstado(RegistroEstado.CONFIRMADO);
-        else registro.setEstado(RegistroEstado.CANCELADO);
+        else if(action.equals(RegistroReceiver.REGISTRAR_NO_TOMADO)) registro.setEstado(RegistroEstado.CANCELADO);
+        registro.setFecha(ZonedDateTime.now());
+        //registro.setFecha(ZonedDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
 
-        RegistroRepository.getInstance(getApplicationContext()).insert(registro, result -> {
-            NotificationManagerCompat.from(getApplicationContext()).cancel(null,idNotificacion); // Cerrar notificacion
+        RegistroRepository.getInstance(getApplicationContext()).update(registro, result -> {
+            if(result){
+                System.out.println("Registro para el medicamento " + registro.getMedicamento().getNombre() + " asentado (estado = " + registro.getEstado() + ") a la hora y fecha: " + registro.getFecha());
+                NotificationManagerCompat.from(getApplicationContext()).cancel(null,idNotificacion); // Cerrar notificacion
+            }
+
         });
 
 
@@ -79,6 +86,21 @@ public class MedicamentoService extends IntentService {
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         Date date = calendar.getTime();
         System.out.println("NUEVA ALARMA DE " + medicamento.getNombre() + " PROGRAMADA PARA: " + calendar.getTime());
+    }
+
+    private void crearRegistro(Medicamento medicamento) {
+
+        Registro registro = new Registro(UUID.randomUUID());
+        registro.setMedicamento(medicamento);
+        registro.setFecha(ZonedDateTime.now());
+        //registro.setFecha(ZonedDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
+        registro.setEstado(RegistroEstado.PENDIENTE);
+
+        RegistroRepository.getInstance(getApplicationContext()).insert(registro, result -> {
+
+        });
+
+
     }
 
 

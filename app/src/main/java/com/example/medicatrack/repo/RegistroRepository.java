@@ -8,6 +8,8 @@ import com.example.medicatrack.repo.persist.impl.RegistroRoomDataSource;
 import com.example.medicatrack.repo.persist.interfaces.CallbacksDataSource;
 import com.example.medicatrack.repo.persist.interfaces.RegistroDataSource;
 
+import java.util.UUID;
+
 public class RegistroRepository implements RegistroDataSource
 {
     private static RegistroRepository INSTANCE = null;
@@ -37,7 +39,7 @@ public class RegistroRepository implements RegistroDataSource
     }
 
     @Override
-    public void getById(int id, CallbacksDataSource.GetByIdCallback<Registro> callback)
+    public void getById(UUID id, CallbacksDataSource.GetByIdCallback<Registro> callback)
     {
         dataSource.getById(id, callback);
     }
@@ -49,13 +51,13 @@ public class RegistroRepository implements RegistroDataSource
     }
 
     @Override
-    public void getAllFrom(int medicamentoId, CallbacksDataSource.GetAllCallback<Registro> callback)
+    public void getAllFrom(UUID medicamentoId, CallbacksDataSource.GetAllCallback<Registro> callback)
     {
         dataSource.getAllFrom(medicamentoId,callback);
     }
 
     @Override
-    public void getAllFromWhere(int medicamentoId, RegistroEstado estado, CallbacksDataSource.GetAllCallback<Registro> callback)
+    public void getAllFromWhere(UUID medicamentoId, RegistroEstado estado, CallbacksDataSource.GetAllCallback<Registro> callback)
     {
         dataSource.getAllFromWhere(medicamentoId, estado, callback);
     }

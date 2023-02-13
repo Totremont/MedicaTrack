@@ -18,8 +18,13 @@ import com.example.medicatrack.MainActivity;
 import com.example.medicatrack.R;
 import com.example.medicatrack.model.Medicamento;
 
+import com.example.medicatrack.model.Registro;
+import com.example.medicatrack.model.enums.RegistroEstado;
+import com.example.medicatrack.repo.RegistroRepository;
 import com.example.medicatrack.service.MedicamentoService;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 
@@ -54,10 +59,21 @@ public class RegistroReceiver extends BroadcastReceiver {
                 PendingIntent pendingIntentAct = PendingIntent.getActivity(context, _id,destinoAct, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
                 // ---------------------
 
+                // CREO EL REGISTRO POSPUESTO (todavia no se confirmo ni cancelo)
+                Registro registro = new Registro(UUID.randomUUID());
+                registro.setMedicamento(medicamento);
+                registro.setFecha(ZonedDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
+                registro.setEstado(RegistroEstado.POSPUESTO);
+
+                RegistroRepository.getInstance(context).insert(registro, result -> {
+                    if(result) System.out.println("Registro (estado = POSPUESTO) creado para el medicamento " + medicamento.getNombre());
+                });
+                // ---------------------------
+
                 // Para el boton de TOMADO
                 Intent btnTomado = new Intent(context, MedicamentoService.class);
                 btnTomado.setAction(REGISTRAR_TOMADO);
-                btnTomado.putExtra("Medicamento", medicamento); // Se pasa el medicamento a registrar
+                btnTomado.putExtra("Registro", registro); // Se pasa el registro creado
 
                 btnTomado.putExtra("idNot", _id);
                 PendingIntent piBtnTomado = PendingIntent.getService(context,_id,btnTomado, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
@@ -66,7 +82,7 @@ public class RegistroReceiver extends BroadcastReceiver {
                 // Para el boton de NO TOMADO
                 Intent btnNoTomado = new Intent(context, MedicamentoService.class);
                 btnNoTomado.setAction(REGISTRAR_NO_TOMADO);
-                btnNoTomado.putExtra("Medicamento", medicamento); // Se pasa el medicamento a registrar
+                btnNoTomado.putExtra("Registro", registro); // Se pasa el registro creado
 
                 btnNoTomado.putExtra("idNot", _id);
                 PendingIntent piBtnNoTomado = PendingIntent.getService(context,_id,btnNoTomado, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
@@ -87,7 +103,6 @@ public class RegistroReceiver extends BroadcastReceiver {
 
                 notificationManagerCompat.notify(_id, builder.build()); // el UUID.randomUUID().hashCode() es para que coloque distintos id, y se agrupen las notificaciones
                 // ---------------------
-
 
                 // Crear siguiente alarma
                 Intent intentAlarma = new Intent(context, MedicamentoService.class);
