@@ -9,6 +9,7 @@ import androidx.room.Update;
 import com.example.medicatrack.repo.persist.entities.RegistroEntity;
 
 import java.util.List;
+import java.util.UUID;
 
 @Dao
 public interface RegistroDao
@@ -23,10 +24,10 @@ public interface RegistroDao
     RegistroEntity getById(int id);
 
     @Query("SELECT * FROM RegistroEntity WHERE (medicamento_id = :medicamentoId AND estado = :estado)")
-    List<RegistroEntity> getAllFromWhere(int medicamentoId, String estado);
+    List<RegistroEntity> getAllFromWhere(UUID medicamentoId, String estado);
 
     @Query("SELECT * FROM RegistroEntity WHERE medicamento_id = :medicamentoId")
-    List<RegistroEntity> getAllFrom(int medicamentoId);
+    List<RegistroEntity> getAllFrom(UUID medicamentoId);
 
     @Query("SELECT * FROM RegistroEntity")
     List<RegistroEntity> getAll();

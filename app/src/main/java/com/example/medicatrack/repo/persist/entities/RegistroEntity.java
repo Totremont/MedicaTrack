@@ -5,6 +5,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 /*  Después de leer 500 páginas y vender mi alma en la Deepweb, llegué a la conclusión de que ésta es la mejor forma (fácil y rápida) de representar tiempo y fecha entre Java y SQL.
 
@@ -32,7 +33,7 @@ import java.sql.Timestamp;
 public class RegistroEntity
 {
     @PrimaryKey(autoGenerate = true) private int id;
-    @ColumnInfo(name="medicamento_id") private int medicaId;
+    @ColumnInfo(name="medicamento_id") private UUID medicaId;
     private Long fecha;
     private String estado;
 
@@ -42,11 +43,11 @@ public class RegistroEntity
         return id;
     }
 
-    public int getMedicaId() {
+    public UUID getMedicaId() {
         return medicaId;
     }
 
-    public void setMedicaId(int medicaId) {
+    public void setMedicaId(UUID medicaId) {
         this.medicaId = medicaId;
     }
 

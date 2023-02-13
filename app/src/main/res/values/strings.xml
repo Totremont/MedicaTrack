@@ -54,6 +54,11 @@
     <string name="fecha">Fecha</string>
     <string name="hora">Hora</string>
 
+    <!-- Strings del channel notification -->
+    <string name="channel_name">NOTIFICACION_MEDICAMENTO</string>
+    <string name="channel_description">Canal para las notificaciones de registro de medicamento</string>
+    <string name="channel_id">REGISTRO</string>
+
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>

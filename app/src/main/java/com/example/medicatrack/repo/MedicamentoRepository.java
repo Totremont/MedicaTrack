@@ -7,6 +7,8 @@ import com.example.medicatrack.repo.persist.impl.MedicamentoRoomDataSource;
 import com.example.medicatrack.repo.persist.interfaces.CallbacksDataSource;
 import com.example.medicatrack.repo.persist.interfaces.MedicamentoDataSource;
 
+import java.util.UUID;
+
 public class MedicamentoRepository implements MedicamentoDataSource
 {
     private static MedicamentoRepository INSTANCE = null;
@@ -36,7 +38,7 @@ public class MedicamentoRepository implements MedicamentoDataSource
     }
 
     @Override
-    public void getById(int id, CallbacksDataSource.GetByIdCallback<Medicamento> callback)
+    public void getById(UUID id, CallbacksDataSource.GetByIdCallback<Medicamento> callback)
     {
         dataSource.getById(id, callback);
     }

@@ -1,12 +1,16 @@
 package com.example.medicatrack.repo.persist.entities;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+
+import java.util.UUID;
 
 @Entity
 public class MedicamentoEntity
 {
-    @PrimaryKey(autoGenerate = true) private int id;
+    @NonNull
+    @PrimaryKey(autoGenerate = false) private UUID id;
     private String nombre;
     private String color;
     private String forma;
@@ -18,9 +22,9 @@ public class MedicamentoEntity
     private Long hora;
     private String descripcion;
 
-    public void setId(int id){this.id = id;}
+    public void setId(UUID id){this.id = id;}
 
-    public int getId()
+    public UUID getId()
     {
         return id;
     }
