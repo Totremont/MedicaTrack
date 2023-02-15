@@ -86,7 +86,7 @@ public class MedicamentoInfoFragment extends Fragment {
         binding.totalValor.setText(registrosTomados.isEmpty() ? "0" : "" + registrosTomados.size());
 
         if(registrosTomados.isEmpty()) binding.ultimoValor.setText("Nunca");
-        else {  //Asume que el ultimo registro es el mas reciente. Se lo podria confirmar en el DAO ordenando descentemente por long?
+        else {  //Asume que el ultimo registro es el mas reciente. Se lo podria confirmar en el DAO ordenando ascendente por long? <-- Sii!
             long diasUltimoTomado = ChronoUnit.DAYS.between(registrosTomados.get(registrosTomados.size() - 1).getFecha(), ahora);
             binding.ultimoValor.setText(diasUltimoTomado > 1 ? "Hace " + diasUltimoTomado + " días" : diasUltimoTomado == 0 ? "Hoy" : "Ayer");
         }
@@ -153,6 +153,7 @@ public class MedicamentoInfoFragment extends Fragment {
                                 // Registros del medicamento eliminados
                                 if(result) System.out.println("Registros del medicamento " + medicamento.getNombre() + " eliminados.");
                             });
+                            if(viewModel.nuevoMedicamento.getValue().equals(medicamento)) viewModel.nuevoMedicamento.setValue(null);
                             NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment_content_main);
                             navController.navigateUp();
                         }

@@ -116,6 +116,7 @@ public class MedicamentosFragment extends Fragment
 
         viewModel.nuevoMedicamento.observe(requireActivity(),nuevo ->
         {
+            if(nuevo == null) return;
             if(!this.medicamentos.contains(nuevo)) {
                 this.medicamentos.add(nuevo);
                 if (binding.chipTodos.isChecked())
