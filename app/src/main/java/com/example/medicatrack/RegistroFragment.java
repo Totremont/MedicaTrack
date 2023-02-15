@@ -25,6 +25,7 @@ import com.example.medicatrack.repo.RegistroRepository;
 import com.example.medicatrack.utilities.FechaFormat;
 import com.example.medicatrack.utilities.ResourcesUtility;
 import com.example.medicatrack.viewmodels.MedicamentoViewModel;
+import com.example.medicatrack.viewmodels.RegistroViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointBackward;
@@ -69,6 +70,7 @@ public class RegistroFragment extends Fragment {
         registroRepo = RegistroRepository.getInstance(requireContext());
         medicamentoRepo = MedicamentoRepository.getInstance(requireContext());
         medicamentoViewModel = new ViewModelProvider(requireActivity()).get(MedicamentoViewModel.class);
+        RegistroViewModel registroViewModel = new ViewModelProvider(requireActivity()).get(RegistroViewModel.class);
 
         adapter = new RegistroAdapter(requireContext());
 
@@ -234,6 +236,16 @@ public class RegistroFragment extends Fragment {
                         });
                     }
                 });
+            }
+        });
+
+        registroViewModel.nuevoRegistro.observe(requireActivity(),registro ->
+        {
+            if(registro != null)
+            {
+                if(esFuturo[0]) setRegistrosFuturos(fechaSeleccionada[0]);
+                else setNuevosRegistros(fechaSeleccionada[0],esPasado[0],esFuturo[0]);
+                registroViewModel.nuevoRegistro.postValue(null);
             }
         });
 

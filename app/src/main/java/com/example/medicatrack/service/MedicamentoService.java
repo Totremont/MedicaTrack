@@ -9,12 +9,15 @@ import android.content.Intent;
 import android.content.Context;
 
 import androidx.core.app.NotificationManagerCompat;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.example.medicatrack.MainActivity;
 import com.example.medicatrack.model.Medicamento;
 import com.example.medicatrack.model.Registro;
 import com.example.medicatrack.model.enums.RegistroEstado;
 import com.example.medicatrack.receiver.RegistroReceiver;
 import com.example.medicatrack.repo.RegistroRepository;
+import com.example.medicatrack.viewmodels.RegistroViewModel;
 
 import java.time.Instant;
 import java.time.ZoneId;

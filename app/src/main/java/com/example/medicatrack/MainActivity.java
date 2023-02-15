@@ -39,6 +39,7 @@ import com.example.medicatrack.repo.MedicamentoRepository;
 import com.example.medicatrack.repo.RegistroRepository;
 import com.example.medicatrack.utilities.ResourcesUtility;
 import com.example.medicatrack.viewmodels.MedicamentoViewModel;
+import com.example.medicatrack.viewmodels.RegistroViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.example.medicatrack.creacion.CreacionActivity;
 import com.example.medicatrack.receiver.RegistroReceiver;
@@ -125,10 +126,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Se inicia la actividad producto de la notificacion
-        if (getIntent().getAction().equals(RegistroReceiver.REGISTRAR)) {
+        if (getIntent().getAction().equals(RegistroReceiver.REGISTRAR))
+        {
+            RegistroViewModel registroViewModel = new ViewModelProvider(this).get(RegistroViewModel.class);
             Medicamento medicamento = getIntent().getParcelableExtra("Medicamento");
             Registro registro = getIntent().getParcelableExtra("Registro");
-
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("REGISTRAR")
                     .setIcon(ResourcesUtility.getMedicamentoImage(medicamento))
@@ -139,18 +141,21 @@ public class MainActivity extends AppCompatActivity {
                             RegistroRepository.getInstance(getApplicationContext()).update(registro, result -> {
 
                             });
+                            registroViewModel.nuevoRegistro.setValue(registro);
                         }
                     })
                     .setNegativeButton("No tomar", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
+                        public void onClick(DialogInterface dialog, int id)
+                        {
                             registro.setEstado(RegistroEstado.CANCELADO);
                             RegistroRepository.getInstance(getApplicationContext()).update(registro, result -> {
 
                             });
+                            registroViewModel.nuevoRegistro.setValue(registro);
                         }
+
                     });
             builder.create().show();
-
         }
 
     }
@@ -240,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         // Cerrar la conexion de la base de datos
-        // Database.getInstance(getApplicationContext()).close();
+        //Database.getInstance(getApplicationContext()).close();
         super.onDestroy();
     }
 
