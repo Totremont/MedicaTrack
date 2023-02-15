@@ -1,6 +1,7 @@
 package com.example.medicatrack.repo.persist.database.daos;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -33,5 +34,8 @@ public interface RegistroDao
 
     @Query("SELECT * FROM RegistroEntity")
     List<RegistroEntity> getAll();
+
+    @Query("DELETE FROM RegistroEntity WHERE medicamento_id = :medicamentoId")
+    void deleteAllFromWhere(UUID medicamentoId);
 
 }

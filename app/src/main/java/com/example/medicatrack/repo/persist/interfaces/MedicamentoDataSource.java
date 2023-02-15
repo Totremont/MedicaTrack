@@ -10,4 +10,5 @@ public interface MedicamentoDataSource
     void update(Medicamento medicamento, CallbacksDataSource.UpdateCallback callback);
     void getById(UUID id, CallbacksDataSource.GetByIdCallback<Medicamento> callback);
     void getAll(CallbacksDataSource.GetAllCallback<Medicamento> callback);
+    void delete(Medicamento medicamento, CallbacksDataSource.DeleteCallback callback);
 }

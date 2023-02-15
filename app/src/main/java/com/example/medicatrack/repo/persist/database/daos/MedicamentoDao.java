@@ -1,6 +1,7 @@
 package com.example.medicatrack.repo.persist.database.daos;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -27,5 +28,7 @@ public interface MedicamentoDao
     @Query("SELECT * FROM MedicamentoEntity")
     List<MedicamentoEntity> getAll();
 
+    @Delete
+    void delete(MedicamentoEntity medicamento);
 
 }

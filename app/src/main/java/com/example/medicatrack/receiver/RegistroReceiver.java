@@ -23,6 +23,7 @@ import com.example.medicatrack.model.Medicamento;
 
 import com.example.medicatrack.model.Registro;
 import com.example.medicatrack.model.enums.RegistroEstado;
+import com.example.medicatrack.repo.MedicamentoRepository;
 import com.example.medicatrack.repo.RegistroRepository;
 import com.example.medicatrack.service.MedicamentoService;
 
@@ -48,83 +49,85 @@ public class RegistroReceiver extends BroadcastReceiver {
         switch (intent.getAction()) {
             case NOTIFICAR: {
                 Medicamento medicamento = intent.getExtras().getParcelable("Medicamento");
+                // Ver si esta en la bd (no fue eliminado)
+                MedicamentoRepository.getInstance(context).getById(medicamento.getId(), ((result, value) -> {
+                    if(result && value != null){
+                        Registro registro = intent.getExtras().getParcelable("Registro");
 
-                // Notificacion
-                String CHANNEL_ID = context.getString(R.string.channel_id);
-                int _id = UUID.randomUUID().hashCode();
+                        // Notificacion
+                        String CHANNEL_ID = context.getString(R.string.channel_id);
+                        int _id = UUID.randomUUID().hashCode();
 
-                // Actividad de destino
-                Intent destinoAct = new Intent(context, MainActivity.class); // CAMBIAR POR LA QUE HAYA CREADO EL EZE
-                destinoAct.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                destinoAct.setAction(REGISTRAR); // Con esta action se va a preguntar por el intent
-                destinoAct.putExtra("Medicamento", medicamento); // Se pasa el medicamento a registrar
+                        // Actividad de destino
+                        Intent destinoAct = new Intent(context, MainActivity.class); // CAMBIAR POR LA QUE HAYA CREADO EL EZE
+                        destinoAct.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        destinoAct.setAction(REGISTRAR); // Con esta action se va a preguntar por el intent
+                        destinoAct.putExtra("Medicamento", medicamento); // Se pasa el medicamento a registrar
 
-                PendingIntent pendingIntentAct = PendingIntent.getActivity(context, _id, destinoAct, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-                // ---------------------
+                        PendingIntent pendingIntentAct = PendingIntent.getActivity(context, _id, destinoAct, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                        // ---------------------
 
-                // CREO EL REGISTRO POSPUESTO (todavia no se confirmo ni cancelo)
-                Registro registro = new Registro(UUID.randomUUID());
-                registro.setMedicamento(medicamento);
-                registro.setFecha(ZonedDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
-                registro.setEstado(RegistroEstado.POSPUESTO);
+                        // MODIFICO EL REGISTRO PENDIENTE A POSPUESTO (todavia no se confirmo ni cancelo)
+                        registro.setEstado(RegistroEstado.POSPUESTO);
+                        RegistroRepository.getInstance(context).update(registro, resultado -> {
+                            if (resultado)
+                                System.out.println("Registro (estado = POSPUESTO) actualizado para el medicamento " + medicamento.getNombre());
+                        });
+                        // ---------------------------
 
-                RegistroRepository.getInstance(context).insert(registro, result -> {
-                    if (result)
-                        System.out.println("Registro (estado = POSPUESTO) creado para el medicamento " + medicamento.getNombre());
-                });
-                // ---------------------------
+                        // Para el boton de TOMADO
+                        Intent btnTomado = new Intent(context, MedicamentoService.class);
+                        btnTomado.setAction(REGISTRAR_TOMADO);
+                        btnTomado.putExtra("Registro", registro); // Se pasa el registro creado
 
-                // Para el boton de TOMADO
-                Intent btnTomado = new Intent(context, MedicamentoService.class);
-                btnTomado.setAction(REGISTRAR_TOMADO);
-                btnTomado.putExtra("Registro", registro); // Se pasa el registro creado
+                        btnTomado.putExtra("idNot", _id);
+                        PendingIntent piBtnTomado = PendingIntent.getService(context, _id, btnTomado, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                        // ---------------------
 
-                btnTomado.putExtra("idNot", _id);
-                PendingIntent piBtnTomado = PendingIntent.getService(context, _id, btnTomado, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-                // ---------------------
+                        // Para el boton de NO TOMADO
+                        Intent btnNoTomado = new Intent(context, MedicamentoService.class);
+                        btnNoTomado.setAction(REGISTRAR_NO_TOMADO);
+                        btnNoTomado.putExtra("Registro", registro); // Se pasa el registro creado
 
-                // Para el boton de NO TOMADO
-                Intent btnNoTomado = new Intent(context, MedicamentoService.class);
-                btnNoTomado.setAction(REGISTRAR_NO_TOMADO);
-                btnNoTomado.putExtra("Registro", registro); // Se pasa el registro creado
+                        btnNoTomado.putExtra("idNot", _id);
+                        PendingIntent piBtnNoTomado = PendingIntent.getService(context, _id, btnNoTomado, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                        // ---------------------
 
-                btnNoTomado.putExtra("idNot", _id);
-                PendingIntent piBtnNoTomado = PendingIntent.getService(context, _id, btnNoTomado, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-                // ---------------------
+                        // Crear notificacion
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                                .setSmallIcon(R.drawable.pastillas_default)
+                                .setLargeIcon(getImageMed(medicamento, context))
+                                .setContentTitle("TOMA TU MEDICACIÓN")
+                                .setContentText(medicamento.getNombre() + " - " + medicamento.getConcentracion() + " " + (medicamento.getUnidad().name().equals("PORCENTAJE") ? "%" : medicamento.getUnidad().name().toLowerCase()))
+                                .setAutoCancel(true)
+                                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                .setContentIntent(pendingIntentAct)
+                                .addAction(R.drawable.pastillas_default, "TOMADO", piBtnTomado)
+                                .addAction(R.drawable.pastillas_default, "NO TOMADO", piBtnNoTomado);
+                        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
 
-                // Crear notificacion
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                        .setSmallIcon(R.drawable.pastillas_default)
-                        .setLargeIcon(getImageMed(medicamento, context))
-                        .setContentTitle("TOMA TU MEDICACIÓN")
-                        .setContentText(medicamento.getNombre() + " - " + medicamento.getConcentracion() + " " + (medicamento.getUnidad().name().equals("PORCENTAJE") ? "%" : medicamento.getUnidad().name().toLowerCase()))
-                        .setAutoCancel(true)
-                        .setPriority(NotificationCompat.PRIORITY_HIGH)
-                        .setContentIntent(pendingIntentAct)
-                        .addAction(R.drawable.pastillas_default, "TOMADO", piBtnTomado)
-                        .addAction(R.drawable.pastillas_default, "NO TOMADO", piBtnNoTomado);
-                NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
+                        // ---------------------------
+                        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
+                        notificationManagerCompat.notify(_id, builder.build()); // el UUID.randomUUID().hashCode() es para que coloque distintos id, y se agrupen las notificaciones
+                        // ---------------------
 
-                // ---------------------------
-                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                notificationManagerCompat.notify(_id, builder.build()); // el UUID.randomUUID().hashCode() es para que coloque distintos id, y se agrupen las notificaciones
-                // ---------------------
-
-                // Crear siguiente alarma
-                Intent intentAlarma = new Intent(context, MedicamentoService.class);
-                intentAlarma.setAction(NUEVA_ALARMA);
-                intentAlarma.putExtra("Medicamento", medicamento);
-                context.startService(intentAlarma);
-                // ---------------------
+                        // Crear siguiente alarma
+                        Intent intentAlarma = new Intent(context, MedicamentoService.class);
+                        intentAlarma.setAction(NUEVA_ALARMA);
+                        intentAlarma.putExtra("Medicamento", medicamento);
+                        context.startService(intentAlarma);
+                        // ---------------------
+                    }
+                }));
 
             }
             break;

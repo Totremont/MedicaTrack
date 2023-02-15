@@ -48,4 +48,9 @@ public class MedicamentoRepository implements MedicamentoDataSource
     {
         dataSource.getAll(callback);
     }
+
+    @Override
+    public void delete(Medicamento medicamento, CallbacksDataSource.DeleteCallback callback) {
+        dataSource.delete(medicamento, callback);
+    }
 }

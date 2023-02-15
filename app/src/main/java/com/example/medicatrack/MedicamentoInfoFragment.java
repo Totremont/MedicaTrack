@@ -1,5 +1,7 @@
 package com.example.medicatrack;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.SharedElementCallback;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.transition.Transition;
 import androidx.transition.TransitionInflater;
 
@@ -18,6 +22,7 @@ import com.example.medicatrack.model.Medicamento;
 import com.example.medicatrack.model.Registro;
 import com.example.medicatrack.model.enums.Frecuencia;
 import com.example.medicatrack.model.enums.RegistroEstado;
+import com.example.medicatrack.repo.MedicamentoRepository;
 import com.example.medicatrack.repo.RegistroRepository;
 import com.example.medicatrack.utilities.FechaFormat;
 import com.example.medicatrack.utilities.ResourcesUtility;
@@ -132,6 +137,34 @@ public class MedicamentoInfoFragment extends Fragment {
             binding.comienzoValor.setText(medicamento.getFechaInicio().getDayOfMonth() + "/"
                     + medicamento.getFechaInicio().getMonthValue() + "/" + medicamento.getFechaInicio().getYear());
         }
+
+        // Comportamiento boton ELIMINAR
+        binding.deleteButton.setOnClickListener(v -> {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("¿Desea eliminar el medicamento y todos sus registros?")
+                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            MedicamentoRepository.getInstance(getContext()).delete(medicamento, result -> {
+                                // Medicamento eliminado
+                                if(result) System.out.println("Medicamento " + medicamento.getNombre() + " eliminado.");
+                            });
+                            RegistroRepository.getInstance(getContext()).deleteAllFromWhere(medicamento.getId(), result -> {
+                                // Registros del medicamento eliminados
+                                if(result) System.out.println("Registros del medicamento " + medicamento.getNombre() + " eliminados.");
+                            });
+                            NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment_content_main);
+                            navController.navigateUp();
+                        }
+                    })
+                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                        }
+                    });
+            builder.create().show();
+
+        });
 
     }
 

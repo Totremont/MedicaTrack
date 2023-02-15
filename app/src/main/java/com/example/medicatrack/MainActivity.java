@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -135,6 +136,12 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         if(id == R.id.action_map){
+
+            // Buscar por farmacias cercanas
+            Uri gmmIntentUri = Uri.parse("geo:0,0?q=Farmacias cercanas");
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+            startActivity(mapIntent);
 
             return true;
         }
