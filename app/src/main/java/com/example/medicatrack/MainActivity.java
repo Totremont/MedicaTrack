@@ -146,6 +146,8 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean("recibir_not", true);
             editor.commit();
             createNotificationChannel();
+            if(requestCode == PERMISO_NOTIFICACION_CFG)
+                Toast.makeText(getApplicationContext(),"Ahora puede habilitar las notificaciones para el registro de medicamentos.",Toast.LENGTH_LONG).show();
         }
 
         if ( (requestCode == PERMISO_NOTIFICACION_INICIAL || requestCode == PERMISO_NOTIFICACION_CFG)
