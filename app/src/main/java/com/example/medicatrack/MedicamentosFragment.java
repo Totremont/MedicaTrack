@@ -84,8 +84,14 @@ public class MedicamentosFragment extends Fragment
 
         binding.chipTodos.setOnClickListener(view1 ->
         {
-            if(medicamentos.isEmpty()) binding.layoutVacio.setVisibility(LinearLayoutCompat.VISIBLE);
-            else binding.layoutVacio.setVisibility(LinearLayoutCompat.GONE);
+            if(medicamentos.isEmpty()) {
+                binding.layoutVacio.setVisibility(LinearLayoutCompat.VISIBLE);
+                binding.recyclerView.setVisibility(RecyclerView.GONE);
+            }
+            else {
+                binding.layoutVacio.setVisibility(LinearLayoutCompat.GONE);
+                binding.recyclerView.setVisibility(RecyclerView.VISIBLE);
+            }
             adapter.setData(medicamentos);
         });
 
@@ -128,7 +134,13 @@ public class MedicamentosFragment extends Fragment
             }).collect(Collectors.toList()));
             adapter.setData(medicamentosFiltrados);
         }
-        if(medicamentosFiltrados.isEmpty()) binding.layoutVacio.setVisibility(LinearLayoutCompat.VISIBLE);
-        else binding.layoutVacio.setVisibility(LinearLayoutCompat.GONE);
+        if(medicamentosFiltrados.isEmpty()) {
+            binding.layoutVacio.setVisibility(LinearLayoutCompat.VISIBLE);
+            binding.recyclerView.setVisibility(RecyclerView.GONE);
+        }
+        else {
+            binding.layoutVacio.setVisibility(LinearLayoutCompat.GONE);
+            binding.recyclerView.setVisibility(RecyclerView.VISIBLE);
+        }
     }
 }

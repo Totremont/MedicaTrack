@@ -33,6 +33,7 @@ import com.example.medicatrack.creacion.CreacionActivity;
 import com.example.medicatrack.receiver.RegistroReceiver;
 
 import com.example.medicatrack.repo.persist.database.Database;
+import com.google.android.material.snackbar.Snackbar;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -85,14 +86,15 @@ public class MainActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
-                    public void onActivityResult(ActivityResult result) {
-
-                        if (result.getResultCode() == Activity.RESULT_OK) {
+                    public void onActivityResult(ActivityResult result)
+                    {
+                        if (result.getResultCode() == Activity.RESULT_OK)
+                        {
                             Intent data = result.getData();
                             Medicamento a = data.getExtras().getParcelable("Medicamento");
 
-                            //viewModel.nuevoMedicamento.setValue(a);
-
+                            viewModel.nuevoMedicamento.setValue(a);
+                            Snackbar.make(binding.getRoot(), "Se ha agregado un nuevo medicamento", Snackbar.LENGTH_LONG).show();
                         }
                     }
                 });

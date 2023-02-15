@@ -134,14 +134,6 @@
             android:layout_marginStart="@dimen/small_dim"
             android:text="No tomar"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/pendiente_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/small_dim"
-            android:visibility="gone"
-            android:text="Pendiente"/>
-
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

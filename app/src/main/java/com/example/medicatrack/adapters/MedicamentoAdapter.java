@@ -80,6 +80,12 @@ public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoAdapter.
                 viewModel.navegarInfo.setValue(true);
                 viewModel.medicamentoSeleccionado = medicamento;
             });
+
+            binding.infoButton.setOnClickListener(view ->
+            {
+                viewModel.navegarInfo.setValue(true);
+                viewModel.medicamentoSeleccionado = medicamento;
+            });
         }
     }
 

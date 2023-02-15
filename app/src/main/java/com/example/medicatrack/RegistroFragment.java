@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.medicatrack.adapters.RegistroAdapter;
 import com.example.medicatrack.databinding.FragmentRegistroBinding;
@@ -17,6 +18,7 @@ import com.example.medicatrack.model.enums.RegistroEstado;
 import com.example.medicatrack.repo.MedicamentoRepository;
 import com.example.medicatrack.repo.RegistroRepository;
 import com.example.medicatrack.utilities.FechaFormat;
+import com.example.medicatrack.viewmodels.MedicamentoViewModel;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointBackward;
 import com.google.android.material.datepicker.DateValidatorPointForward;
@@ -36,7 +38,7 @@ public class RegistroFragment extends Fragment {
     private FragmentRegistroBinding binding;
     private RegistroRepository registroRepo;
     private MedicamentoRepository medicamentoRepo;
-
+    private MedicamentoViewModel medicamentoViewModel;
     private final ArrayList<Registro> registros = new ArrayList<>();
     private final ArrayList<Medicamento> medicamentos = new ArrayList<>();
     private RegistroAdapter adapter;
@@ -57,6 +59,7 @@ public class RegistroFragment extends Fragment {
 
         registroRepo = RegistroRepository.getInstance(requireContext());
         medicamentoRepo = MedicamentoRepository.getInstance(requireContext());
+        medicamentoViewModel = new ViewModelProvider(this).get(MedicamentoViewModel.class);
 
         adapter = new RegistroAdapter(requireContext());
 
@@ -66,7 +69,12 @@ public class RegistroFragment extends Fragment {
 
         ZonedDateTime ahora = ZonedDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).truncatedTo(ChronoUnit.DAYS);
 
-        setNuevosRegistros(ahora,false,false);
+        final ZonedDateTime[] fechaSeleccionada = new ZonedDateTime[1]; //Cuando se selecciona pasado o futuro
+        fechaSeleccionada[0] = ahora;
+        final boolean[] esPasado = new boolean[1];
+        final boolean[] esFuturo = new boolean[1];
+
+        setNuevosRegistros(ahora,esPasado[0],esFuturo[0]);
 
         binding.recyclerView.setAdapter(adapter);
 
@@ -83,15 +91,17 @@ public class RegistroFragment extends Fragment {
             MaterialDatePicker<Long> picker = materialDateBuilder.build();
             picker.addOnPositiveButtonClickListener(selection ->
             {
-                ZonedDateTime fechaSeleccionada = ZonedDateTime.ofInstant(Instant.ofEpochMilli(selection),ZoneId.of("America/Argentina/Buenos_Aires"));
-                fechaSeleccionada = fechaSeleccionada.plusDays(1); //Por alguna razon la fecha devuelta esta un dia atrasada
+                fechaSeleccionada[0] = ZonedDateTime.ofInstant(Instant.ofEpochMilli(selection),ZoneId.of("America/Argentina/Buenos_Aires"));
+                fechaSeleccionada[0] = fechaSeleccionada[0].plusDays(1); //Por alguna razon la fecha devuelta esta un dia atrasada
                 StringBuilder text = new StringBuilder()
-                        .append(fechaSeleccionada.getDayOfMonth())
-                        .append("/").append(fechaSeleccionada.getMonthValue()).append("/").append(fechaSeleccionada.getYear());
+                        .append(fechaSeleccionada[0].getDayOfMonth())
+                        .append("/").append(fechaSeleccionada[0].getMonthValue()).append("/").append(fechaSeleccionada[0].getYear());
                 binding.chipAtras.setText(text.toString());
                 binding.chipMasAdelante.setText("Más adelante");
-                setNuevosRegistros(fechaSeleccionada,true,false);
-                StringBuilder text2 = new StringBuilder().append("Registro del ").append(fechaSeleccionada.getDayOfWeek().name().toLowerCase()).append(" ").append(text);
+                esPasado[0] = true;
+                esFuturo[0] = false;
+                setNuevosRegistros(fechaSeleccionada[0],true,false);
+                StringBuilder text2 = new StringBuilder().append("Registro del ").append(fechaSeleccionada[0].getDayOfWeek().name().toLowerCase()).append(" ").append(text);
                 binding.titleText.setText(text2.toString());
                 binding.subtitleText.setText("Medicamentos consumidos");
 
@@ -110,15 +120,17 @@ public class RegistroFragment extends Fragment {
             MaterialDatePicker<Long> picker = materialDateBuilder.build();
             picker.addOnPositiveButtonClickListener(selection ->
             {
-                ZonedDateTime fechaSeleccionada = ZonedDateTime.ofInstant(Instant.ofEpochMilli(selection),ZoneId.of("America/Argentina/Buenos_Aires"));
-                fechaSeleccionada = fechaSeleccionada.plusDays(1); //Por alguna razon la fecha devuelta esta un dia atrasada
+                fechaSeleccionada[0] = ZonedDateTime.ofInstant(Instant.ofEpochMilli(selection),ZoneId.of("America/Argentina/Buenos_Aires"));
+                fechaSeleccionada[0] = fechaSeleccionada[0].plusDays(1); //Por alguna razon la fecha devuelta esta un dia atrasada
                 StringBuilder text = new StringBuilder()
-                        .append(fechaSeleccionada.getDayOfMonth())
-                        .append("/").append(fechaSeleccionada.getMonthValue()).append("/").append(fechaSeleccionada.getYear());
+                        .append(fechaSeleccionada[0].getDayOfMonth())
+                        .append("/").append(fechaSeleccionada[0].getMonthValue()).append("/").append(fechaSeleccionada[0].getYear());
                 binding.chipMasAdelante.setText(text.toString());
                 binding.chipAtras.setText("Más atrás");
-                setRegistrosFuturos(fechaSeleccionada);
-                StringBuilder text2 = new StringBuilder().append("Registro del ").append(fechaSeleccionada.getDayOfWeek().name().toLowerCase()).append(" ").append(text);
+                esPasado[0] = false;
+                esFuturo[0] = true;
+                setRegistrosFuturos(fechaSeleccionada[0]);
+                StringBuilder text2 = new StringBuilder().append("Registro del ").append(fechaSeleccionada[0].getDayOfWeek().name().toLowerCase()).append(" ").append(text);
                 binding.titleText.setText(text2.toString());
                 binding.subtitleText.setText("Medicamentos a consumir");
 
@@ -132,8 +144,11 @@ public class RegistroFragment extends Fragment {
             binding.subtitleText.setText("Medicamentos a consumir");
             binding.chipMasAdelante.setText("Más adelante");
             binding.chipAtras.setText("Más atrás");
+            fechaSeleccionada[0] = ahora;
+            esPasado[0] = false;
+            esFuturo[0] = false;
 
-            setNuevosRegistros(ahora,false,false);
+            setNuevosRegistros(ahora,esPasado[0],esFuturo[0]);
         });
 
         binding.chipAyer.setOnClickListener(view1 ->
@@ -142,8 +157,10 @@ public class RegistroFragment extends Fragment {
             binding.subtitleText.setText("Medicamentos consumidos");
             binding.chipMasAdelante.setText("Más adelante");
             binding.chipAtras.setText("Más atrás");
-
-            setNuevosRegistros(ahora.minusDays(1),true,false);
+            fechaSeleccionada[0] = ahora.minusDays(1);
+            esPasado[0] = true;
+            esFuturo[0] = false;
+            setNuevosRegistros(fechaSeleccionada[0],esPasado[0],esFuturo[0]);
         });
 
         binding.chipAnteayer.setOnClickListener(view1 ->
@@ -152,8 +169,10 @@ public class RegistroFragment extends Fragment {
             binding.subtitleText.setText("Medicamentos consumidos");
             binding.chipMasAdelante.setText("Más adelante");
             binding.chipAtras.setText("Más atrás");
-
-            setNuevosRegistros(ahora.minusDays(2),true,false);
+            fechaSeleccionada[0] = ahora.minusDays(2);
+            esPasado[0] = true;
+            esFuturo[0] = false;
+            setNuevosRegistros(fechaSeleccionada[0],esPasado[0],esFuturo[0]);
         });
 
         binding.chipManiana.setOnClickListener(view1 ->
@@ -162,8 +181,10 @@ public class RegistroFragment extends Fragment {
             binding.subtitleText.setText("Medicamentos a consumir");
             binding.chipMasAdelante.setText("Más adelante");
             binding.chipAtras.setText("Más atrás");
-
-            setRegistrosFuturos(ahora.plusDays(1));
+            fechaSeleccionada[0] = ahora.plusDays(1);
+            esPasado[0] = false;
+            esFuturo[0] = true;
+            setRegistrosFuturos(fechaSeleccionada[0]);
         });
 
         binding.chipPasadoManiana.setOnClickListener(view1 ->
@@ -173,7 +194,31 @@ public class RegistroFragment extends Fragment {
             binding.chipMasAdelante.setText("Más adelante");
             binding.chipAtras.setText("Más atrás");
 
-            setRegistrosFuturos(ahora.plusDays(2));
+            fechaSeleccionada[0] = ahora.plusDays(2);
+            esPasado[0] = false;
+            esFuturo[0] = true;
+            setRegistrosFuturos(fechaSeleccionada[0]);
+        });
+
+        medicamentoViewModel.nuevoMedicamento.observe(getViewLifecycleOwner(),medicamento ->
+        {
+            if(medicamento != null)
+            {
+                registroRepo.getAllFrom(medicamento.getId(),(result, values) ->
+                {
+                    if(result)
+                    {
+                        values.forEach(it ->
+                        {
+                            if(ChronoUnit.DAYS.between(it.getFecha(),fechaSeleccionada[0]) == 0)
+                            {
+                                if(esFuturo[0]) setRegistrosFuturos(fechaSeleccionada[0]);
+                                else setNuevosRegistros(fechaSeleccionada[0],esPasado[0],esFuturo[0]);
+                            }
+                        });
+                    }
+                });
+            }
         });
 
     }
