@@ -113,7 +113,7 @@ public class RegistroAdapter extends RecyclerView.Adapter<RegistroAdapter.Regist
 
         public void bind(Medicamento medicamento, Registro registro, boolean esPasado, boolean esFuturo)
         {
-            binding.tiempoTextView.setText(FechaFormat.formattedHora(medicamento.getHora()));
+            binding.tiempoTextView.setText(FechaFormat.formattedHora(registro.getFecha()));
 
             if(registro.getEstado().equals(RegistroEstado.PENDIENTE))
             {

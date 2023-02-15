@@ -153,7 +153,7 @@ public class MedicamentoInfoFragment extends Fragment {
                                 // Registros del medicamento eliminados
                                 if(result) System.out.println("Registros del medicamento " + medicamento.getNombre() + " eliminados.");
                             });
-                            if(viewModel.nuevoMedicamento.getValue().equals(medicamento)) viewModel.nuevoMedicamento.setValue(null);
+                            if(viewModel.nuevoMedicamento.getValue() != null && viewModel.nuevoMedicamento.getValue().equals(medicamento)) viewModel.nuevoMedicamento.setValue(null);
                             NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment_content_main);
                             navController.navigateUp();
                         }

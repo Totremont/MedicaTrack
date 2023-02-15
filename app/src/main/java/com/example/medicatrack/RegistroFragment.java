@@ -1,11 +1,15 @@
 package com.example.medicatrack;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -21,10 +25,12 @@ import com.example.medicatrack.repo.RegistroRepository;
 import com.example.medicatrack.utilities.FechaFormat;
 import com.example.medicatrack.utilities.ResourcesUtility;
 import com.example.medicatrack.viewmodels.MedicamentoViewModel;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointBackward;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.time.DayOfWeek;
 import java.time.Instant;
@@ -33,6 +39,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class RegistroFragment extends Fragment {
@@ -79,6 +86,12 @@ public class RegistroFragment extends Fragment {
         setNuevosRegistros(ahora,esPasado[0],esFuturo[0]);
 
         binding.recyclerView.setAdapter(adapter);
+
+        medicamentoRepo.getAll((result, values) ->
+        {
+            if(result) if(values.isEmpty()) binding.necesidadButton.setVisibility(MaterialButton.GONE);
+            else binding.necesidadButton.setVisibility(MaterialButton.VISIBLE);
+        });
 
 
         binding.chipAtras.setOnClickListener(view1 ->
@@ -206,6 +219,7 @@ public class RegistroFragment extends Fragment {
         {
             if(medicamento != null)
             {
+                binding.necesidadButton.setVisibility(MaterialButton.VISIBLE);
                 registroRepo.getAllFrom(medicamento.getId(),(result, values) ->
                 {
                     if(result)
@@ -221,6 +235,85 @@ public class RegistroFragment extends Fragment {
                     }
                 });
             }
+        });
+
+        //Boton en necesidad
+        binding.necesidadButton.setOnClickListener(view1 ->
+        {
+            ArrayList<Medicamento> todos = new ArrayList<>();
+            ArrayList<Medicamento> seleccionables = new ArrayList<>();
+            ArrayList<Medicamento> noSeleccionables = new ArrayList<>();
+            ArrayList<Registro> registrosHoy = new ArrayList<>();
+            todos.clear();
+            registrosHoy.clear();
+            seleccionables.clear();
+            noSeleccionables.clear();
+            medicamentoRepo.getAll((result, values) ->
+            {
+                if(result) todos.addAll(values);
+            });
+
+            registroRepo.getAllFromDate(ahora,(result, values) ->
+            {
+                if(result) registrosHoy.addAll(values);
+            });
+
+            noSeleccionables = (ArrayList<Medicamento>) registrosHoy.stream().map(Registro::getMedicamento).collect(Collectors.toList());
+            for (Medicamento it : todos)
+            {
+                if(!noSeleccionables.contains(it)) seleccionables.add(it);
+            }
+            if(seleccionables.isEmpty())
+            {
+                Toast toast = Toast.makeText(requireActivity(), "Ya has registrado todos los medicamentos el día de hoy", Toast.LENGTH_SHORT);
+                toast.show();
+                return;
+            }
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
+            int[] pos = new int[1];
+            pos[0] = 0;
+
+            builder.setTitle("Selecciona un medicamento");
+
+            CharSequence[] lista = new CharSequence[seleccionables.size()];
+            for(int i = 0; i< lista.length; i++)
+            {
+                lista[i] = seleccionables.get(i).getNombre();
+            }
+
+            builder.setSingleChoiceItems(lista,0,(dialogInterface, i) -> {pos[0] = i;});
+
+            // Add the buttons
+            builder.setPositiveButton("Añadir", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id)
+                {
+                    if(pos[0] < 0)
+                    {
+                        Toast toast = Toast.makeText(requireActivity(), "Debes seleccionar un medicamento", Toast.LENGTH_SHORT);
+                        toast.show();
+                        dialog.dismiss();
+                    } else
+                    {
+                        Medicamento seleccionado = seleccionables.get(pos[0]);
+                        Registro nuevoRegistro = new Registro(UUID.randomUUID());
+                        nuevoRegistro.setEstado(RegistroEstado.CONFIRMADO);
+                        nuevoRegistro.setMedicamento(seleccionado);
+                        nuevoRegistro.setFecha(ZonedDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
+                        registroRepo.insert(nuevoRegistro,result -> {});
+                        if(binding.chipHoy.isChecked()) setNuevosRegistros(ahora,false,false);
+                        dialog.dismiss();
+                    }
+                }
+            });
+            builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id)
+                {
+                    // User cancelled the dialog
+                }
+            });
+
+            builder.create().show();
+
         });
 
     }
