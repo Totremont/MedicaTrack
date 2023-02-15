@@ -1,7 +1,10 @@
 package com.example.medicatrack;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,13 +22,12 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.medicatrack.databinding.ActivityMainBinding;
 import com.example.medicatrack.model.Medicamento;
-import com.example.medicatrack.model.Registro;
-import com.example.medicatrack.model.enums.RegistroEstado;
-import com.example.medicatrack.repo.MedicamentoRepository;
-import com.example.medicatrack.repo.RegistroRepository;
+
 import com.example.medicatrack.viewmodels.MedicamentoViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.example.medicatrack.creacion.CreacionActivity;
+import com.example.medicatrack.receiver.RegistroReceiver;
+
 import com.example.medicatrack.repo.persist.database.Database;
 
 import java.time.ZoneId;
@@ -43,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        createNotificationChannel();
+
         setSupportActionBar(binding.toolbar);
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -51,16 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         MedicamentoViewModel viewModel = new ViewModelProvider(this).get(MedicamentoViewModel.class);
-
-/*        MedicamentoRepository repo1 = MedicamentoRepository.getInstance(this);
-        Medicamento[] medi = new Medicamento[1];
-        repo1.getAll((result, values) -> {medi[0] = values.get(0);});
-        Registro regi = new Registro();
-        regi.setFecha(ZonedDateTime.now());
-        regi.setEstado(RegistroEstado.PENDIENTE);
-        regi.setMedicamento(medi[0]);
-        RegistroRepository repo2 = RegistroRepository.getInstance(this);
-        repo2.insert(regi,result -> {});*/
 
         viewModel.activarFab.observe(this, aBoolean ->
         {
@@ -87,7 +81,9 @@ public class MainActivity extends AppCompatActivity {
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             Intent data = result.getData();
                             Medicamento a = data.getExtras().getParcelable("Medicamento");
+
                             viewModel.nuevoMedicamento.setValue(a);
+
                         }
                     }
                 });
@@ -97,6 +93,13 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, CreacionActivity.class);
             creacionLauncher.launch(intent);
         });
+
+
+        // Se inicia la actividad producto de la notificacion
+        if(getIntent().getAction().equals(RegistroReceiver.REGISTRAR))
+        {
+            Medicamento med = getIntent().getParcelableExtra("Medicamento");
+        }
 
     }
 
@@ -136,4 +139,22 @@ public class MainActivity extends AppCompatActivity {
         Database.getInstance(getApplicationContext()).close();
         super.onDestroy();
     }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            String CHANNEL_ID = getString(R.string.channel_id);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 }

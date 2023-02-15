@@ -11,12 +11,12 @@ import com.example.medicatrack.repo.persist.entities.RegistroEntity;
 import com.example.medicatrack.repo.persist.interfaces.CallbacksDataSource;
 import com.example.medicatrack.repo.persist.interfaces.RegistroDataSource;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class RegistroRoomDataSource implements RegistroDataSource
 {
@@ -45,6 +45,7 @@ public class RegistroRoomDataSource implements RegistroDataSource
         else
         {
             RegistroEntity entity = new RegistroEntity();
+            entity.setId(registro.getId());
             entity.setEstado(registro.getEstado().name());
             entity.setFecha(registro.getFecha().toEpochSecond());
             entity.setMedicaId(registro.getMedicamento().getId());
@@ -79,7 +80,7 @@ public class RegistroRoomDataSource implements RegistroDataSource
     }
 
     @Override
-    public void getById(int id, CallbacksDataSource.GetByIdCallback<Registro> callback)
+    public void getById(UUID id, CallbacksDataSource.GetByIdCallback<Registro> callback)
     {
         try
         {
@@ -99,7 +100,7 @@ public class RegistroRoomDataSource implements RegistroDataSource
     }
 
     @Override
-    public void getAllFrom(int medicamentoId, CallbacksDataSource.GetAllCallback<Registro> callback)
+    public void getAllFrom(UUID medicamentoId, CallbacksDataSource.GetAllCallback<Registro> callback)
     {
         try
         {
@@ -117,6 +118,11 @@ public class RegistroRoomDataSource implements RegistroDataSource
         }
     }
 
+    @Override
+    public void getAllFromWhere(UUID medicamentoId, RegistroEstado estado, CallbacksDataSource.GetAllCallback<Registro> callback) {
+
+    }
+
     @Override   //Solo evalua que las fechas sean iguales, ignorando la hora
     public void getAllFromDate(ZonedDateTime fecha, CallbacksDataSource.GetAllCallback<Registro> callback)
     {
@@ -129,13 +135,12 @@ public class RegistroRoomDataSource implements RegistroDataSource
                 registros.add(entityToModel(it,context));
             });
 
-           callback.onGetAll(true,registros);
+            callback.onGetAll(true,registros);
         } catch (Exception e)
         {
             callback.onGetAll(false,null);
         }
     }
-
     public static Registro entityToModel(RegistroEntity entity, Context context)
     {
         Registro registro = new Registro(entity.getId());

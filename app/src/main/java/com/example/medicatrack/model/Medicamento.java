@@ -16,10 +16,12 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
+import java.util.UUID;
 
 public class Medicamento implements Parcelable, Comparator<Medicamento>
 {
-    private int id;
+
+    private UUID id;
     private String nombre;
     private Color color;
     private Forma forma;
@@ -35,12 +37,14 @@ public class Medicamento implements Parcelable, Comparator<Medicamento>
 
     public Medicamento(){};
 
-    public Medicamento(int id)
+    public Medicamento(UUID id)
     {
         this.id = id;
     }
 
-    public int getId() {
+
+    public UUID getId()
+    {
         return id;
     }
 
@@ -139,7 +143,7 @@ public class Medicamento implements Parcelable, Comparator<Medicamento>
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
-        dest.writeInt(this.id);
+        dest.writeString(this.id.toString());
         dest.writeString(this.nombre);
         dest.writeString(this.color.name());
         dest.writeString(this.forma.name());
@@ -153,7 +157,7 @@ public class Medicamento implements Parcelable, Comparator<Medicamento>
     }
 
     private Medicamento(Parcel in){
-        this.id = in.readInt();
+        this.id = UUID.fromString(in.readString());
         this.nombre = in.readString();
         this.color = Color.valueOf(in.readString());
         this.forma = Forma.valueOf(in.readString());
@@ -161,8 +165,10 @@ public class Medicamento implements Parcelable, Comparator<Medicamento>
         this.unidad = Unidad.valueOf(in.readString());
         this.frecuencia = Frecuencia.valueOf(in.readString());
         this.dias = in.readString();
-        this.fechaInicio = in.readLong() != -1 ? ZonedDateTime.ofInstant(Instant.ofEpochSecond(in.readLong()), ZoneId.of("America/Argentina/Buenos_Aires")) : null;
-        this.hora = in.readLong() != -1 ? ZonedDateTime.ofInstant(Instant.ofEpochSecond(in.readLong()), ZoneId.of("America/Argentina/Buenos_Aires")) : null;
+        Long segFecha = in.readLong();
+        this.fechaInicio = segFecha != -1 ? ZonedDateTime.ofInstant(Instant.ofEpochSecond(segFecha), ZoneId.of("America/Argentina/Buenos_Aires")) : null;
+        Long segHora = in.readLong();
+        this.hora = segHora != -1 ? ZonedDateTime.ofInstant(Instant.ofEpochSecond(segHora), ZoneId.of("America/Argentina/Buenos_Aires")) : null;
         this.descripcion = in.readString();
     }
 

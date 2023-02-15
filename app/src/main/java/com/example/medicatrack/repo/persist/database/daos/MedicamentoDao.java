@@ -9,6 +9,7 @@ import androidx.room.Update;
 import com.example.medicatrack.repo.persist.entities.MedicamentoEntity;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @Dao
@@ -21,7 +22,7 @@ public interface MedicamentoDao
     void update(MedicamentoEntity medicamento);
 
     @Query("SELECT * FROM MedicamentoEntity WHERE id = :id")
-    MedicamentoEntity getById(int id);
+    MedicamentoEntity getById(UUID id);
 
     @Query("SELECT * FROM MedicamentoEntity")
     List<MedicamentoEntity> getAll();

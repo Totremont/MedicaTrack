@@ -29,13 +29,14 @@ import java.util.ConcurrentModificationException;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.UUID;
 
 public class RegistroAdapter extends RecyclerView.Adapter<RegistroAdapter.RegistroViewHolder>
 {
 
     private final ArrayList<Medicamento> medicamentos = new ArrayList<>();  //Todos los medicamentos del dia
 
-    private final SortedMap<Integer,Registro> registros = new TreeMap<Integer,Registro>();  //Registros de aquellos tomados, no tomados y pendientes
+    private final SortedMap<UUID,Registro> registros = new TreeMap<UUID,Registro>();  //Registros de aquellos tomados, no tomados y pendientes
 
     //Si esta seleccionado un chip
     private boolean esPasado = false;

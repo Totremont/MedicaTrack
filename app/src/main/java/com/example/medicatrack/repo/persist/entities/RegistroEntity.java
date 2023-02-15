@@ -1,5 +1,6 @@
 package com.example.medicatrack.repo.persist.entities;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -9,6 +10,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 /*  Después de leer 500 páginas y vender mi alma en la Deepweb, llegué a la conclusión de que ésta es la mejor forma (fácil y rápida) de representar tiempo y fecha entre Java y SQL.
 
@@ -35,25 +37,27 @@ import java.time.temporal.ChronoUnit;
 @Entity
 public class RegistroEntity
 {
-    @PrimaryKey(autoGenerate = true) private int id;
-    @ColumnInfo(name="medicamento_id") private int medicaId;
+    @NonNull
+    @PrimaryKey(autoGenerate = false) private UUID id;
+    @ColumnInfo(name="medicamento_id") private UUID medicaId;
     private Long fecha;
     private String estado;
 
+
     @ColumnInfo(name="fecha_sin_hora")
     private Long fechaSinHora;          //Usada internamente solo para comparar en la bd
+    public void setId(UUID id){this.id = id;}
 
-    public void setId(int id){this.id = id;}
 
-    public int getId() {
+    public UUID getId() {
         return id;
     }
 
-    public int getMedicaId() {
+    public UUID getMedicaId() {
         return medicaId;
     }
 
-    public void setMedicaId(int medicaId) {
+    public void setMedicaId(UUID medicaId) {
         this.medicaId = medicaId;
     }
 

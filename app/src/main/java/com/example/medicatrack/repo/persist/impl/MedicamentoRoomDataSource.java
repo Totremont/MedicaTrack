@@ -18,6 +18,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 public class MedicamentoRoomDataSource implements MedicamentoDataSource
@@ -44,6 +45,7 @@ public class MedicamentoRoomDataSource implements MedicamentoDataSource
         else
         {
             MedicamentoEntity entity = new MedicamentoEntity();
+            entity.setId(medicamento.getId());
             entity.setColor(medicamento.getColor().name());
             entity.setConcentracion(medicamento.getConcentracion());
             entity.setUnidad(medicamento.getUnidad().name());
@@ -73,7 +75,7 @@ public class MedicamentoRoomDataSource implements MedicamentoDataSource
     }
 
     @Override
-    public void getById(int id, CallbacksDataSource.GetByIdCallback<Medicamento> callback)
+    public void getById(UUID id, CallbacksDataSource.GetByIdCallback<Medicamento> callback)
     {
         try
         {

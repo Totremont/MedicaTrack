@@ -1,6 +1,9 @@
 package com.example.medicatrack.creacion;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -15,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import com.example.medicatrack.MainActivity;
 import com.example.medicatrack.R;
 import com.example.medicatrack.creacion.utilities.Utilities;
 import com.example.medicatrack.creacion.viewmodels.CreacionViewModel;
@@ -25,6 +29,8 @@ import com.example.medicatrack.model.enums.Color;
 import com.example.medicatrack.model.enums.Forma;
 import com.example.medicatrack.model.enums.Frecuencia;
 import com.example.medicatrack.model.enums.Unidad;
+import com.example.medicatrack.receiver.RegistroReceiver;
+import com.example.medicatrack.repo.MedicamentoRepository;
 import com.example.medicatrack.repo.persist.impl.MedicamentoRoomDataSource;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.datepicker.CalendarConstraints;
@@ -39,6 +45,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
 
 public class FrecuenciaMedicamentoFragment extends Fragment {
 
@@ -48,6 +55,7 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
     private ZonedDateTime fechaSeleccionada;
     private ZonedDateTime horaSeleccionada;
     private int frecSeleccionada;
+    private List<Integer> chipsChecked;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,6 +64,8 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
         // Dado que, de manera muy rara, cuando se llega a este fragmento, el titulo vuelve a "Medicamento", lo seteo nuevamente al valor actual del nonbre
         viewModel.setNombreMed(viewModel.getNombreMed().getValue());
         frecSeleccionada = 0; // Frecuencia por defecto
+
+        chipsChecked = new ArrayList<>(); // Inicializacion de los chips seleccionados (el metodo del chip group anda mal)
     }
 
     @Override
@@ -110,7 +120,7 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
                         binding.contFechaHora.errFecha.setVisibility(View.INVISIBLE);
                     }
                     if (horaSeleccionada != null) {
-                        binding.contFechaHora.editHora.setText(Utilities.formatearHora(horaSeleccionada.getHour(), horaSeleccionada.getMinute()));
+                        binding.contFechaHora.editHora.setText(String.format("%02d", horaSeleccionada.getHour()) + ":" + String.format("%02d", horaSeleccionada.getMinute()));
                         binding.contFechaHora.errHora.setVisibility(View.INVISIBLE);
                     }
                     binding.contIntRegulares.contenedor.setVisibility(View.GONE);
@@ -125,7 +135,7 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
                         binding.contIntRegulares.contFechaHora2.errFecha.setVisibility(View.INVISIBLE);
                     }
                     if (horaSeleccionada != null) {
-                        binding.contIntRegulares.contFechaHora2.editHora.setText(Utilities.formatearHora(horaSeleccionada.getHour(), horaSeleccionada.getMinute()));
+                        binding.contIntRegulares.contFechaHora2.editHora.setText(String.format("%02d", horaSeleccionada.getHour()) + ":" + String.format("%02d", horaSeleccionada.getMinute()));
                         binding.contIntRegulares.contFechaHora2.errHora.setVisibility(View.INVISIBLE);
                     }
                     binding.contDias.contDias.setVisibility(View.GONE);
@@ -140,7 +150,7 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
                         binding.contDias.contFechaHora3.errFecha.setVisibility(View.INVISIBLE);
                     }
                     if (horaSeleccionada != null) {
-                        binding.contDias.contFechaHora3.editHora.setText(Utilities.formatearHora(horaSeleccionada.getHour(), horaSeleccionada.getMinute()));
+                        binding.contDias.contFechaHora3.editHora.setText(String.format("%02d", horaSeleccionada.getHour()) + ":" + String.format("%02d", horaSeleccionada.getMinute()));
                         binding.contDias.contFechaHora3.errHora.setVisibility(View.INVISIBLE);
                     }
                     binding.contIntRegulares.contenedor.setVisibility(View.GONE);
@@ -162,7 +172,7 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
         // Boton LISTO
         binding.fab.setOnClickListener(vista -> {
             if (verificarDatos()) {
-                Medicamento med = new Medicamento(1);
+                Medicamento med = new Medicamento(UUID.randomUUID());
                 med.setNombre(viewModel.getNombreMed().getValue());
                 med.setColor(Color.valueOf(viewModel.getColor().getValue().toUpperCase()));
                 med.setForma(Forma.valueOf(viewModel.getForma().getValue().toUpperCase()));
@@ -181,8 +191,12 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
                     break;
                     case 2: { // Dias de la semana especificos
                         String diasEspecif = "";
-                        for (Integer num: binding.contDias.diasChipGroup.getCheckedChipIds()) { // [1, 2, 4] siendo Lunes - 1
-                            diasEspecif = diasEspecif+num;
+                        for (int i = 0; i < binding.contDias.diasChipGroup.getChildCount(); i++) { // [1, 2, 4] siendo Lunes - 1
+                            Chip chip = (Chip) binding.contDias.diasChipGroup.getChildAt(i);
+                            if(chip.isChecked()){
+                                diasEspecif = diasEspecif + (i+1);
+                                chipsChecked.add(i+1);
+                            }
                         }
                         med.setDias(diasEspecif);
                     }
@@ -193,17 +207,81 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
                 med.setDescripcion(viewModel.getDescripcion());
 
                 // Guardar en la bd
-                MedicamentoRoomDataSource dataSource = MedicamentoRoomDataSource.getInstance(this.getContext());
-                dataSource.insert(med, result -> {
-                    if (result) { // Retornar a la actividad principal
-                        getActivity().setResult(Activity.RESULT_OK, new Intent().putExtra("Medicamento", med));
+                MedicamentoRepository medicamentoRepository = MedicamentoRepository.getInstance(getContext());
+                medicamentoRepository.insert(med, result -> {
+                    if (result) {
+
+                        crearAlarma(med);
+
+                        // Intent para la actividad de retorno, y para crear las alarmas
+                        Intent intent = new Intent(getContext(), MainActivity.class);
+                        intent.putExtra("Medicamento", med);
+
+                        // Retornar a la actividad principal
+                        getActivity().setResult(Activity.RESULT_OK, intent);
                         getActivity().finish();
+
                     } else {
                         // Hubo un error en el guardado, notificar?
                     }
                 });
             }
         });
+
+    }
+
+    private void crearAlarma(Medicamento med) {
+
+        AlarmManager alarmManager = (AlarmManager) getActivity().getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(getActivity().getApplicationContext(), RegistroReceiver.class);
+        intent.putExtra("Medicamento", med);
+        intent.setAction(RegistroReceiver.NOTIFICAR);
+
+        PendingIntent pendingIntent;
+
+        Calendar calendar = Calendar.getInstance();
+
+        /*
+        Para establecer la alarma repetitiva, puede usarse el setRepeating():
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent); // Se repite todos los dias
+        Pero, es inexacta (a pesar de que la documentacion diga que lo es), y demasiado para el objetivo de la aplicacion.
+        Por lo tanto, como recomienda la documentacion (https://developer.android.com/reference/android/app/AlarmManager#setRepeating(int,%20long,%20long,%20android.app.PendingIntent)):
+            "Note: as of API 19, all repeating alarms are inexact.
+            If your application needs precise delivery times then it must use one-time exact alarms, rescheduling each time as described above."
+        Aqui se seteará la proxima alarma, y cuando se reciba el evento para notificar, se creará la siguiente alarma.
+        */
+
+        if (frecSeleccionada == 0 || frecSeleccionada == 1) { // Todos los dias - Intervalos regulares
+            pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(), UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            calendar.setTimeInMillis(fechaSeleccionada.toInstant().toEpochMilli());
+            calendar.set(Calendar.HOUR_OF_DAY, horaSeleccionada.getHour());
+            calendar.set(Calendar.MINUTE, horaSeleccionada.getMinute());
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            System.out.println("ALARMA DE " + med.getNombre() + " PROGRAMADA PARA: " + calendar.getTime());
+
+        } else if (frecSeleccionada == 2) { // Dias especificos
+
+            int diaHoy = ZonedDateTime.now().getDayOfWeek().getValue(); // Obtengo el dia de la semana (si es domingo, es 7)
+
+            for (int diaATomar : chipsChecked) { // [1, 2, 4] siendo Lunes - 1
+                int _rand = UUID.randomUUID().hashCode();
+                //intent.putExtra("rand", _rand);
+                pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(), _rand, intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+                int dif = diaATomar - diaHoy;
+                if (dif >= 0)
+                    calendar.setTimeInMillis(fechaSeleccionada.toInstant().toEpochMilli() + (AlarmManager.INTERVAL_DAY * dif)); // Programo para esta semana
+                else
+                    calendar.setTimeInMillis(fechaSeleccionada.toInstant().toEpochMilli() + (AlarmManager.INTERVAL_DAY * (7 + dif)));
+                calendar.set(Calendar.HOUR_OF_DAY, horaSeleccionada.getHour());
+                calendar.set(Calendar.MINUTE, horaSeleccionada.getMinute());
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                System.out.println("ALARMA DE " + med.getNombre() + " PROGRAMADA PARA: " + calendar.getTime());
+
+            }
+
+        }
 
     }
 
@@ -287,7 +365,7 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
 
         timePicker.addOnPositiveButtonClickListener(v -> {
             horaSeleccionada = ZonedDateTime.ofInstant(Instant.ofEpochMilli(Utilities.getMiliseconds(timePicker.getHour(), timePicker.getMinute())), ZoneId.of("America/Argentina/Buenos_Aires"));
-            binding.editHora.setText(Utilities.formatearHora(timePicker.getHour(), timePicker.getMinute()));
+            binding.editHora.setText(String.format("%02d", timePicker.getHour()) + ":" + String.format("%02d", timePicker.getMinute()));
             binding.errHora.setVisibility(View.INVISIBLE);
         });
 
