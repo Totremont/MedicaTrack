@@ -3,21 +3,48 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/MainFragment">
+    app:startDestination="@id/navigation2">
 
-    <fragment
-        android:id="@+id/MainFragment"
-        android:name="com.example.medicatrack.MainFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_main">
+    <navigation android:id="@+id/navigation2"
+        app:startDestination="@id/FirstFragment">
+        <fragment
+            android:id="@+id/FirstFragment"
+            android:name="com.example.medicatrack.MainFragment"
+            android:label="@string/first_fragment_label"
+            tools:layout="@layout/fragment_main">
+
+            <action
+                android:id="@+id/action_FirstFragment_to_SecondFragment"
+                app:destination="@id/SecondFragment" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/SecondFragment"
+            android:name="com.example.medicatrack.RegistroFragment"
+            android:label="@string/second_fragment_label"
+            tools:layout="@layout/fragment_registro">
+
+            <action
+                android:id="@+id/action_SecondFragment_to_FirstFragment"
+                app:destination="@id/FirstFragment" />
+        </fragment>
 
         <action
-            android:id="@+id/action_FirstFragment_to_medicamentoInfoFragment"
+            android:id="@+id/action_global_settingsFragment"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_global_medicamentoInfoFragment"
             app:destination="@id/medicamentoInfoFragment" />
-    </fragment>
+
+    </navigation>
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.medicatrack.SettingsFragment"
+        android:label="Configuración" />
     <fragment
         android:id="@+id/medicamentoInfoFragment"
         android:name="com.example.medicatrack.MedicamentoInfoFragment"
-        android:label="Información"
+        android:label="medicamento_info"
         tools:layout="@layout/medicamento_info" />
 </navigation>

@@ -135,9 +135,9 @@ public class RegistroAdapter extends RecyclerView.Adapter<RegistroAdapter.Regist
 
             ZonedDateTime ahora = ZonedDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
 
-            boolean esHoraPasada = FechaFormat.greaterTime(ahora,medicamento.getHora()) > 0;
+            //boolean esHoraPasada = FechaFormat.greaterTime(ahora,medicamento.getHora()) > 0;
 
-            boolean esFechaPasada = (esPasado || esHoraPasada) && !esFuturo;
+            boolean esFechaPasada = esPasado  && !esFuturo;
 
             setEstado(registro,esFechaPasada);
             if(!esFuturo)

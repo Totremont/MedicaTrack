@@ -3,9 +3,12 @@ package com.example.medicatrack;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -20,6 +23,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+
 import com.example.medicatrack.databinding.ActivityMainBinding;
 import com.example.medicatrack.model.Medicamento;
 
@@ -30,8 +34,6 @@ import com.example.medicatrack.receiver.RegistroReceiver;
 
 import com.example.medicatrack.repo.persist.database.Database;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,7 +47,14 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        createNotificationChannel();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if(sharedPreferences.getBoolean("recibir_not", true)){ // Si no existe (defValue == true) o tiene valor true
+            createNotificationChannel();
+            editor.putBoolean("recibir_not",true);
+        }
+
+
 
         setSupportActionBar(binding.toolbar);
 
@@ -65,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         viewModel.navegarInfo.observe(this,aBoolean ->
         {
             if(aBoolean) {
-                navController.navigate(R.id.action_FirstFragment_to_medicamentoInfoFragment);
+                navController.navigate(R.id.action_global_medicamentoInfoFragment);
                 viewModel.navegarInfo.postValue(false);
             }
         });
@@ -82,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                             Intent data = result.getData();
                             Medicamento a = data.getExtras().getParcelable("Medicamento");
 
-                            viewModel.nuevoMedicamento.setValue(a);
+                            //viewModel.nuevoMedicamento.setValue(a);
 
                         }
                     }
@@ -119,6 +128,12 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+            navController.navigate(R.id.action_global_settingsFragment);
+            return true;
+        }
+        if(id == R.id.action_map){
+
             return true;
         }
 
