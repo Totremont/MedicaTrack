@@ -22,6 +22,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.UUID;
 
 public class MedicamentoService extends IntentService {
@@ -74,7 +75,7 @@ public class MedicamentoService extends IntentService {
         int _id = UUID.randomUUID().hashCode();
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), _id, intentAlarma, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("America/Argentina/Buenos_Aires"));
         calendar.set(Calendar.HOUR_OF_DAY, medicamento.getHora().getHour());
         calendar.set(Calendar.MINUTE, medicamento.getHora().getMinute());
 
@@ -92,8 +93,19 @@ public class MedicamentoService extends IntentService {
 
         Registro registro = new Registro(UUID.randomUUID());
         registro.setMedicamento(medicamento);
-        registro.setFecha(ZonedDateTime.now());
-        //registro.setFecha(ZonedDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
+
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("America/Argentina/Buenos_Aires"));
+        calendar.set(Calendar.HOUR_OF_DAY, medicamento.getHora().getHour());
+        calendar.set(Calendar.MINUTE, medicamento.getHora().getMinute());
+
+        switch (medicamento.getFrecuencia()) {
+            case TODOS_DIAS: calendar.setTimeInMillis(System.currentTimeMillis()+INTERVAL_DAY); break;
+            case INTERVALO_REGULAR: calendar.setTimeInMillis(System.currentTimeMillis()+(INTERVAL_DAY*Integer.parseInt(medicamento.getDias()))); break;
+            case DIAS_ESPECIFICOS: calendar.setTimeInMillis(System.currentTimeMillis()+(7*INTERVAL_DAY)); break;
+        }
+
+        registro.setFecha(ZonedDateTime.ofInstant(Instant.ofEpochMilli(calendar.getTimeInMillis()), ZoneId.of("America/Argentina/Buenos_Aires")));
+
         registro.setEstado(RegistroEstado.PENDIENTE);
 
         RegistroRepository.getInstance(getApplicationContext()).insert(registro, result -> {
