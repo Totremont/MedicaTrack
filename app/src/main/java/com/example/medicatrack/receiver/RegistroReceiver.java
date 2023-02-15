@@ -1,15 +1,18 @@
 package com.example.medicatrack.receiver;
 
+import android.Manifest;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
@@ -56,7 +59,7 @@ public class RegistroReceiver extends BroadcastReceiver {
                 destinoAct.setAction(REGISTRAR); // Con esta action se va a preguntar por el intent
                 destinoAct.putExtra("Medicamento", medicamento); // Se pasa el medicamento a registrar
 
-                PendingIntent pendingIntentAct = PendingIntent.getActivity(context, _id,destinoAct, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pendingIntentAct = PendingIntent.getActivity(context, _id, destinoAct, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
                 // ---------------------
 
                 // CREO EL REGISTRO POSPUESTO (todavia no se confirmo ni cancelo)
@@ -66,7 +69,8 @@ public class RegistroReceiver extends BroadcastReceiver {
                 registro.setEstado(RegistroEstado.POSPUESTO);
 
                 RegistroRepository.getInstance(context).insert(registro, result -> {
-                    if(result) System.out.println("Registro (estado = POSPUESTO) creado para el medicamento " + medicamento.getNombre());
+                    if (result)
+                        System.out.println("Registro (estado = POSPUESTO) creado para el medicamento " + medicamento.getNombre());
                 });
                 // ---------------------------
 
@@ -76,7 +80,7 @@ public class RegistroReceiver extends BroadcastReceiver {
                 btnTomado.putExtra("Registro", registro); // Se pasa el registro creado
 
                 btnTomado.putExtra("idNot", _id);
-                PendingIntent piBtnTomado = PendingIntent.getService(context,_id,btnTomado, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent piBtnTomado = PendingIntent.getService(context, _id, btnTomado, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
                 // ---------------------
 
                 // Para el boton de NO TOMADO
@@ -85,7 +89,7 @@ public class RegistroReceiver extends BroadcastReceiver {
                 btnNoTomado.putExtra("Registro", registro); // Se pasa el registro creado
 
                 btnNoTomado.putExtra("idNot", _id);
-                PendingIntent piBtnNoTomado = PendingIntent.getService(context,_id,btnNoTomado, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent piBtnNoTomado = PendingIntent.getService(context, _id, btnNoTomado, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
                 // ---------------------
 
                 // Crear notificacion
@@ -101,6 +105,17 @@ public class RegistroReceiver extends BroadcastReceiver {
                         .addAction(R.drawable.pastillas_default, "NO TOMADO", piBtnNoTomado);
                 NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
 
+                // ---------------------------
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
                 notificationManagerCompat.notify(_id, builder.build()); // el UUID.randomUUID().hashCode() es para que coloque distintos id, y se agrupen las notificaciones
                 // ---------------------
 

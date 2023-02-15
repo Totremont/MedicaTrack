@@ -1,14 +1,17 @@
 package com.example.medicatrack.creacion;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -31,7 +34,6 @@ import com.example.medicatrack.model.enums.Frecuencia;
 import com.example.medicatrack.model.enums.Unidad;
 import com.example.medicatrack.receiver.RegistroReceiver;
 import com.example.medicatrack.repo.MedicamentoRepository;
-import com.example.medicatrack.repo.persist.impl.MedicamentoRoomDataSource;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
@@ -45,6 +47,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.UUID;
 
 public class FrecuenciaMedicamentoFragment extends Fragment {
@@ -240,7 +243,7 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
 
         PendingIntent pendingIntent;
 
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("America/Argentina/Buenos_Aires"));
 
         /*
         Para establecer la alarma repetitiva, puede usarse el setRepeating():
@@ -262,7 +265,7 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
 
         } else if (frecSeleccionada == 2) { // Dias especificos
 
-            int diaHoy = ZonedDateTime.now().getDayOfWeek().getValue(); // Obtengo el dia de la semana (si es domingo, es 7)
+            int diaHoy = ZonedDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).getDayOfWeek().getValue(); // Obtengo el dia de la semana (si es domingo, es 7)
 
             for (int diaATomar : chipsChecked) { // [1, 2, 4] siendo Lunes - 1
                 int _rand = UUID.randomUUID().hashCode();
@@ -337,14 +340,14 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
 
     private void setearFechaYHora(FechaHoraBinding binding) {
         // Fecha
-        MaterialDatePicker datePicker = MaterialDatePicker.Builder.datePicker()
+        MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
                 .setCalendarConstraints(new CalendarConstraints.Builder().setValidator(DateValidatorPointForward.now()).build())
                 .setTitleText("Fecha de inicio")
                 .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                 .build();
 
         datePicker.addOnPositiveButtonClickListener(selection -> {
-            Long time = Long.parseLong(selection.toString()) + 10800000;
+            Long time = selection + 3*3600000;
             // El date picker toma la fecha UTC con hora 00:00. Le sumo 3 horas (en milisegundos) para que, al guardarlo como
             // ZonedDateTime (ARG - UTC-03:00), siga siendo la misma fecha (y no disminuya un dia por diferencia de 3 horas).
             fechaSeleccionada = ZonedDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.of("America/Argentina/Buenos_Aires"));
