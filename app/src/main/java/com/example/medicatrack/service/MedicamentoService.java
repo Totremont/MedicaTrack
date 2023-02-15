@@ -7,7 +7,6 @@ import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
-import android.os.Parcelable;
 
 import androidx.core.app.NotificationManagerCompat;
 
@@ -21,7 +20,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -39,8 +37,7 @@ public class MedicamentoService extends IntentService {
                 actualizarRegistro(intent.getParcelableExtra("Registro"), intent.getIntExtra("idNot",-1), intent.getAction());
             } break;
             case RegistroReceiver.NUEVA_ALARMA: {
-                crearAlarma(intent.getParcelableExtra("Medicamento"));
-                crearRegistro(intent.getParcelableExtra("Medicamento"));
+                crearAlarmaYRegistroPendiente(intent.getParcelableExtra("Medicamento"));
             } break;
         }
         stopSelf(); // Detener el service
@@ -50,8 +47,8 @@ public class MedicamentoService extends IntentService {
 
         if(action.equals(RegistroReceiver.REGISTRAR_TOMADO)) registro.setEstado(RegistroEstado.CONFIRMADO);
         else if(action.equals(RegistroReceiver.REGISTRAR_NO_TOMADO)) registro.setEstado(RegistroEstado.CANCELADO);
-        registro.setFecha(ZonedDateTime.now());
-        //registro.setFecha(ZonedDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
+        //registro.setFecha(ZonedDateTime.now());
+        registro.setFecha(ZonedDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
 
         RegistroRepository.getInstance(getApplicationContext()).update(registro, result -> {
             if(result){
@@ -64,13 +61,18 @@ public class MedicamentoService extends IntentService {
 
     }
 
-    private void crearAlarma(Medicamento medicamento) {
-
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+    private void crearAlarmaYRegistroPendiente(Medicamento medicamento) {
 
         Intent intentAlarma = new Intent(getApplicationContext(), RegistroReceiver.class);
         intentAlarma.putExtra("Medicamento", medicamento);
         intentAlarma.setAction(RegistroReceiver.NOTIFICAR);
+
+        // Registro pendiente
+        Registro registro = crearRegistro(medicamento);
+        intentAlarma.putExtra("Registro", registro);
+
+        // Alarma
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         int _id = UUID.randomUUID().hashCode();
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), _id, intentAlarma, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
@@ -85,11 +87,11 @@ public class MedicamentoService extends IntentService {
             case DIAS_ESPECIFICOS: calendar.setTimeInMillis(System.currentTimeMillis()+(7*INTERVAL_DAY)); break;
         }
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-        Date date = calendar.getTime();
-        System.out.println("NUEVA ALARMA DE " + medicamento.getNombre() + " PROGRAMADA PARA: " + calendar.getTime());
+
+        System.out.println("NUEVA ALARMA (y registro pendiente) DE " + medicamento.getNombre() + " PROGRAMADA PARA: " + calendar.getTime());
     }
 
-    private void crearRegistro(Medicamento medicamento) {
+    private Registro crearRegistro(Medicamento medicamento) {
 
         Registro registro = new Registro(UUID.randomUUID());
         registro.setMedicamento(medicamento);
@@ -111,8 +113,7 @@ public class MedicamentoService extends IntentService {
         RegistroRepository.getInstance(getApplicationContext()).insert(registro, result -> {
 
         });
-
-
+        return registro;
     }
 
 

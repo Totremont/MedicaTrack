@@ -44,18 +44,7 @@ public class MedicamentoRoomDataSource implements MedicamentoDataSource
         if(medicamento == null) callback.onInsert(false);
         else
         {
-            MedicamentoEntity entity = new MedicamentoEntity();
-            entity.setId(medicamento.getId());
-            entity.setColor(medicamento.getColor().name());
-            entity.setConcentracion(medicamento.getConcentracion());
-            entity.setUnidad(medicamento.getUnidad().name());
-            entity.setForma(medicamento.getForma().name());
-            entity.setNombre(medicamento.getNombre());
-            entity.setFrecuencia(medicamento.getFrecuencia().name());
-            entity.setFechaInicio(medicamento.getFechaInicio() != null ? medicamento.getFechaInicio().toInstant().getEpochSecond() : null);
-            entity.setDias(medicamento.getDias());
-            entity.setHora(medicamento.getHora() != null ? medicamento.getHora().toInstant().getEpochSecond() : null);
-            entity.setDescripcion(medicamento.getDescripcion());
+            MedicamentoEntity entity = modelToEntity(medicamento);
             try
             {
                 medicamentoDao.insert(entity);
@@ -105,6 +94,35 @@ public class MedicamentoRoomDataSource implements MedicamentoDataSource
         {
             callback.onGetAll(false,null);
         }
+    }
+
+    @Override
+    public void delete(Medicamento medicamento, CallbacksDataSource.DeleteCallback callback) {
+        try
+        {
+            MedicamentoEntity entity = modelToEntity(medicamento);
+            medicamentoDao.delete(entity);
+            callback.onDelete(true);
+        } catch (Exception e)
+        {
+            callback.onDelete(false);
+        }
+    }
+
+    public static MedicamentoEntity modelToEntity(Medicamento medicamento){
+        MedicamentoEntity entity = new MedicamentoEntity();
+        entity.setId(medicamento.getId());
+        entity.setColor(medicamento.getColor().name());
+        entity.setConcentracion(medicamento.getConcentracion());
+        entity.setUnidad(medicamento.getUnidad().name());
+        entity.setForma(medicamento.getForma().name());
+        entity.setNombre(medicamento.getNombre());
+        entity.setFrecuencia(medicamento.getFrecuencia().name());
+        entity.setFechaInicio(medicamento.getFechaInicio() != null ? medicamento.getFechaInicio().toInstant().getEpochSecond() : null);
+        entity.setDias(medicamento.getDias());
+        entity.setHora(medicamento.getHora() != null ? medicamento.getHora().toInstant().getEpochSecond() : null);
+        entity.setDescripcion(medicamento.getDescripcion());
+        return entity;
     }
 
     public static Medicamento entityToModel(MedicamentoEntity entity)

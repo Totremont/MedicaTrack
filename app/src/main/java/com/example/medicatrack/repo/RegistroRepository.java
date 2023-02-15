@@ -68,4 +68,9 @@ public class RegistroRepository implements RegistroDataSource
     {
         dataSource.getAllFromDate(fecha,callback);
     }
+
+    @Override
+    public void deleteAllFromWhere(UUID medicamentoId, CallbacksDataSource.DeleteCallback callback) {
+        dataSource.deleteAllFromWhere(medicamentoId, callback);
+    }
 }

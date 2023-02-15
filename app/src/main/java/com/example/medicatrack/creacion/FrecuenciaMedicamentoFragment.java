@@ -1,17 +1,14 @@
 package com.example.medicatrack.creacion;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -28,12 +25,15 @@ import com.example.medicatrack.creacion.viewmodels.CreacionViewModel;
 import com.example.medicatrack.databinding.FechaHoraBinding;
 import com.example.medicatrack.databinding.FragmentFrecuenciaMedicamentoBinding;
 import com.example.medicatrack.model.Medicamento;
+import com.example.medicatrack.model.Registro;
 import com.example.medicatrack.model.enums.Color;
 import com.example.medicatrack.model.enums.Forma;
 import com.example.medicatrack.model.enums.Frecuencia;
+import com.example.medicatrack.model.enums.RegistroEstado;
 import com.example.medicatrack.model.enums.Unidad;
 import com.example.medicatrack.receiver.RegistroReceiver;
 import com.example.medicatrack.repo.MedicamentoRepository;
+import com.example.medicatrack.repo.RegistroRepository;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
@@ -214,9 +214,9 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
                 medicamentoRepository.insert(med, result -> {
                     if (result) {
 
-                        crearAlarma(med);
+                        crearAlarmaYRegistroPendiente(med);
 
-                        // Intent para la actividad de retorno, y para crear las alarmas
+                        // Intent para la actividad de retorno
                         Intent intent = new Intent(getContext(), MainActivity.class);
                         intent.putExtra("Medicamento", med);
 
@@ -233,7 +233,7 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
 
     }
 
-    private void crearAlarma(Medicamento med) {
+    private void crearAlarmaYRegistroPendiente(Medicamento med) {
 
         AlarmManager alarmManager = (AlarmManager) getActivity().getApplicationContext().getSystemService(Context.ALARM_SERVICE);
 
@@ -256,22 +256,33 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
         */
 
         if (frecSeleccionada == 0 || frecSeleccionada == 1) { // Todos los dias - Intervalos regulares
-            pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(), UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
             calendar.setTimeInMillis(fechaSeleccionada.toInstant().toEpochMilli());
             calendar.set(Calendar.HOUR_OF_DAY, horaSeleccionada.getHour());
             calendar.set(Calendar.MINUTE, horaSeleccionada.getMinute());
+
+            // Registro pendiente
+            Registro registro = new Registro(UUID.randomUUID());
+            registro.setMedicamento(med);
+            registro.setFecha(ZonedDateTime.ofInstant(Instant.ofEpochMilli(calendar.getTimeInMillis()), ZoneId.of("America/Argentina/Buenos_Aires")));
+            registro.setEstado(RegistroEstado.PENDIENTE);
+            intent.putExtra("Registro", registro);
+            RegistroRepository.getInstance(getContext()).insert(registro, result -> {});
+
+            // Alarma
+            pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(), UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-            System.out.println("ALARMA DE " + med.getNombre() + " PROGRAMADA PARA: " + calendar.getTime());
+
+            System.out.println("ALARMA (y registro pendiente) DE " + med.getNombre() + " PROGRAMADA PARA: " + calendar.getTime());
 
         } else if (frecSeleccionada == 2) { // Dias especificos
 
             int diaHoy = ZonedDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).getDayOfWeek().getValue(); // Obtengo el dia de la semana (si es domingo, es 7)
 
             for (int diaATomar : chipsChecked) { // [1, 2, 4] siendo Lunes - 1
-                int _rand = UUID.randomUUID().hashCode();
-                //intent.putExtra("rand", _rand);
-                pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(), _rand, intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
+                // Calendar
                 int dif = diaATomar - diaHoy;
                 if (dif >= 0)
                     calendar.setTimeInMillis(fechaSeleccionada.toInstant().toEpochMilli() + (AlarmManager.INTERVAL_DAY * dif)); // Programo para esta semana
@@ -279,8 +290,22 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
                     calendar.setTimeInMillis(fechaSeleccionada.toInstant().toEpochMilli() + (AlarmManager.INTERVAL_DAY * (7 + dif)));
                 calendar.set(Calendar.HOUR_OF_DAY, horaSeleccionada.getHour());
                 calendar.set(Calendar.MINUTE, horaSeleccionada.getMinute());
+
+                // Registro pendiente
+                Registro registro = new Registro(UUID.randomUUID());
+                registro.setMedicamento(med);
+                registro.setFecha(ZonedDateTime.ofInstant(Instant.ofEpochMilli(calendar.getTimeInMillis()), ZoneId.of("America/Argentina/Buenos_Aires")));
+                registro.setEstado(RegistroEstado.PENDIENTE);
+                intent.putExtra("Registro", registro);
+                RegistroRepository.getInstance(getContext()).insert(registro, result -> {});
+
+                // Alarma
+                int _rand = UUID.randomUUID().hashCode();
+                pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(), _rand, intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-                System.out.println("ALARMA DE " + med.getNombre() + " PROGRAMADA PARA: " + calendar.getTime());
+
+                System.out.println("ALARMA (y registro pendiente) DE " + med.getNombre() + " PROGRAMADA PARA: " + calendar.getTime());
 
             }
 

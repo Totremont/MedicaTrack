@@ -21,4 +21,8 @@ public interface CallbacksDataSource
     {
         void onGetAll(boolean result, final List<T> values);
     }
+    interface DeleteCallback
+    {
+        void onDelete(boolean result);
+    }
 }

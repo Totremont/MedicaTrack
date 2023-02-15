@@ -17,4 +17,5 @@ public interface RegistroDataSource
     void getAllFromDate(ZonedDateTime fecha, CallbacksDataSource.GetAllCallback<Registro> callback);
     void getAllFrom(UUID medicamentoId, CallbacksDataSource.GetAllCallback<Registro> callback);
     void getAllFromWhere(UUID medicamentoId, RegistroEstado estado, CallbacksDataSource.GetAllCallback<Registro> callback);
+    void deleteAllFromWhere(UUID medicamentoId, CallbacksDataSource.DeleteCallback callback);
 }

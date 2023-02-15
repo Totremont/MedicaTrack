@@ -66,11 +66,7 @@ public class RegistroRoomDataSource implements RegistroDataSource
     {
         try
         {
-            RegistroEntity entity = new RegistroEntity();
-            entity.setId(registro.getId());
-            entity.setEstado(registro.getEstado().name());
-            entity.setFecha(registro.getFecha().toEpochSecond());
-            entity.setMedicaId(registro.getMedicamento().getId());
+            RegistroEntity entity = modelToEntity(registro);
             registroDao.update(entity);
             callback.onUpdate(true);
         } catch(Exception e)
@@ -140,6 +136,28 @@ public class RegistroRoomDataSource implements RegistroDataSource
         {
             callback.onGetAll(false,null);
         }
+    }
+
+    @Override
+    public void deleteAllFromWhere(UUID medicamentoId, CallbacksDataSource.DeleteCallback callback) {
+        try
+        {
+            registroDao.deleteAllFromWhere(medicamentoId);
+            callback.onDelete(true);
+
+        } catch (Exception e)
+        {
+            callback.onDelete(false);
+        }
+    }
+
+    public static RegistroEntity modelToEntity(Registro registro){
+        RegistroEntity entity = new RegistroEntity();
+        entity.setId(registro.getId());
+        entity.setEstado(registro.getEstado().name());
+        entity.setFecha(registro.getFecha().toEpochSecond());
+        entity.setMedicaId(registro.getMedicamento().getId());
+        return entity;
     }
     public static Registro entityToModel(RegistroEntity entity, Context context)
     {
