@@ -274,6 +274,7 @@ public class RegistroFragment extends Fragment {
             pos[0] = 0;
 
             builder.setTitle("Selecciona un medicamento");
+            builder.setIcon(R.drawable.icon_medication);
 
             CharSequence[] lista = new CharSequence[seleccionables.size()];
             for(int i = 0; i< lista.length; i++)
