@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         if (getIntent().getAction().equals(RegistroReceiver.REGISTRAR)) {
             Medicamento medicamento = getIntent().getParcelableExtra("Medicamento");
             Registro registro = getIntent().getParcelableExtra("Registro");
-            /*
+
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("REGISTRAR")
                     .setIcon(ResourcesUtility.getMedicamentoImage(medicamento))
@@ -143,11 +143,14 @@ public class MainActivity extends AppCompatActivity {
                     })
                     .setNegativeButton("No tomar", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            // User cancelled the dialog
+                            registro.setEstado(RegistroEstado.CANCELADO);
+                            RegistroRepository.getInstance(getApplicationContext()).update(registro, result -> {
+
+                            });
                         }
                     });
             builder.create().show();
-             */
+
         }
 
     }
@@ -237,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         // Cerrar la conexion de la base de datos
-        Database.getInstance(getApplicationContext()).close();
+        // Database.getInstance(getApplicationContext()).close();
         super.onDestroy();
     }
 
