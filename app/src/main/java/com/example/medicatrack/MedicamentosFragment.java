@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.core.app.SharedElementCallback;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -18,18 +19,25 @@ import com.example.medicatrack.adapters.MedicamentoAdapter;
 import com.example.medicatrack.adapters.RegistroAdapter;
 import com.example.medicatrack.databinding.FragmentMedicamentosBinding;
 import com.example.medicatrack.model.Medicamento;
+import com.example.medicatrack.model.enums.Frecuencia;
 import com.example.medicatrack.repo.MedicamentoRepository;
 import com.example.medicatrack.viewmodels.MedicamentoViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class MedicamentosFragment extends Fragment
 {
 
     private FragmentMedicamentosBinding binding;
+    private MedicamentoAdapter adapter;
+    private final ArrayList<Medicamento> medicamentos = new ArrayList<>();
+    private final ArrayList<Medicamento> medicamentosFiltrados = new ArrayList<>();
+
+    private MedicamentoViewModel viewModel;
 
 
     @Override
@@ -52,26 +60,75 @@ public class MedicamentosFragment extends Fragment
         super.onViewCreated(view, savedInstanceState);
 
         MedicamentoRepository repo = MedicamentoRepository.getInstance(getContext());
-        final ArrayList<Medicamento> medicamentos = new ArrayList<>();
-        repo.getById(1,(result, value) ->
-        {
-            if(result) medicamentos.add(value);
-        });
+        viewModel = new ViewModelProvider(requireActivity()).get(MedicamentoViewModel.class);
 
-        repo.getById(2,(result, value) ->
-        {
-            if(result) medicamentos.add(value);
-        });
+        medicamentos.clear();
+        medicamentosFiltrados.clear();
 
-        repo.getById(3,(result, value) ->
+        repo.getAll((result, values) ->
         {
-            if(result) medicamentos.add(value);
+            if(result) medicamentos.addAll(values);
         });
 
         MedicamentoViewModel viewModel = new ViewModelProvider(requireActivity()).get(MedicamentoViewModel.class);
 
-        MedicamentoAdapter adapter = new MedicamentoAdapter(viewModel);
+        adapter = new MedicamentoAdapter(viewModel);
+
         adapter.setData(medicamentos);
+
+        if(medicamentos.isEmpty()) binding.layoutVacio.setVisibility(LinearLayoutCompat.VISIBLE);
+        else binding.layoutVacio.setVisibility(LinearLayoutCompat.GONE);
+
         binding.recyclerView.setAdapter(adapter);
+
+
+        binding.chipTodos.setOnClickListener(view1 ->
+        {
+            if(medicamentos.isEmpty()) binding.layoutVacio.setVisibility(LinearLayoutCompat.VISIBLE);
+            else binding.layoutVacio.setVisibility(LinearLayoutCompat.GONE);
+            adapter.setData(medicamentos);
+        });
+
+        binding.chipDiaEspecifico.setOnClickListener(view1 ->
+        {
+            setMedicamentos(Frecuencia.DIAS_ESPECIFICOS,null);
+        });
+
+        binding.chipRegular.setOnClickListener(view1 ->
+        {
+            setMedicamentos(Frecuencia.INTERVALO_REGULAR,Frecuencia.TODOS_DIAS);
+        });
+
+        binding.chipNecesidad.setOnClickListener(view1 ->
+        {
+            setMedicamentos(Frecuencia.NECESIDAD,null);
+        });
+
+        viewModel.nuevoMedicamento.observe(getViewLifecycleOwner(),nuevo ->
+        {
+            if(this.medicamentos.contains(nuevo)) return;
+            this.medicamentos.add(nuevo);
+            if(binding.chipTodos.isChecked()) adapter.setData(medicamentos);
+            else if(binding.chipDiaEspecifico.isChecked()) setMedicamentos(Frecuencia.DIAS_ESPECIFICOS,null);
+            else if(binding.chipRegular.isChecked()) setMedicamentos(Frecuencia.INTERVALO_REGULAR,Frecuencia.TODOS_DIAS);
+            else if(binding.chipNecesidad.isChecked()) setMedicamentos(Frecuencia.NECESIDAD,null);
+        });
+
+
+    }
+
+    public void setMedicamentos(Frecuencia frecuencia, Frecuencia frecuencia2)
+    {
+        medicamentosFiltrados.clear();
+        if(!medicamentos.isEmpty()) {
+            medicamentosFiltrados.addAll(medicamentos.stream().filter(it ->
+            {
+                if(frecuencia2 == null) return it.getFrecuencia().equals(frecuencia);
+                else return (it.getFrecuencia().equals(frecuencia) || it.getFrecuencia().equals(frecuencia2));
+            }).collect(Collectors.toList()));
+            adapter.setData(medicamentosFiltrados);
+        }
+        if(medicamentosFiltrados.isEmpty()) binding.layoutVacio.setVisibility(LinearLayoutCompat.VISIBLE);
+        else binding.layoutVacio.setVisibility(LinearLayoutCompat.GONE);
     }
 }

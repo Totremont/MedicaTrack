@@ -10,29 +10,30 @@ import com.example.medicatrack.model.enums.Color;
 import com.example.medicatrack.model.enums.Forma;
 import com.example.medicatrack.model.enums.Frecuencia;
 import com.example.medicatrack.model.enums.Unidad;
+import com.example.medicatrack.utilities.FechaFormat;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 
-public class Medicamento implements Parcelable
+public class Medicamento implements Parcelable, Comparator<Medicamento>
 {
-    private final int id;
+    private int id;
     private String nombre;
     private Color color;
     private Forma forma;
     private float concentracion;
-
     private Frecuencia frecuencia;
-
     private String dias;
-
     private ZonedDateTime hora;
-
     private String descripcion;
-
     private Unidad unidad;
     private ZonedDateTime fechaInicio;
+
+    private int cantidad;   //agregado, revisar parcel
+
+    public Medicamento(){};
 
     public Medicamento(int id)
     {
@@ -49,6 +50,14 @@ public class Medicamento implements Parcelable
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
     }
 
     public Color getColor() {
@@ -168,6 +177,13 @@ public class Medicamento implements Parcelable
             return new Medicamento[0];
         }
     };
+
+
+    @Override
+    public int compare(Medicamento medicamento, Medicamento t1) //0 m == t1, -1 m < t1 , 1 t1 < m
+    {
+        return FechaFormat.greaterTime(medicamento.getHora(),t1.getHora());
+    }
 }
 
 

@@ -20,6 +20,7 @@
         android:textAppearance="?attr/textAppearanceBodyLarge"
         android:textColor="?attr/colorOnSurface"
         android:text="12:30 AM"
+        android:gravity="center"
         />
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -78,7 +79,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/small_dim"
-        android:text="600 mg • 1 pastilla"
+        android:text="Consumir 1 unidad de 600mg"
         android:textAppearance="?attr/textAppearanceBodyMedium"
         android:textColor="?attr/colorOnSurfaceVariant"
         app:layout_constraintStart_toEndOf="@id/icon_medicamento"
@@ -145,4 +146,5 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
 

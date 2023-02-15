@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.medicatrack.adapters.MainContentAdapter;
 import com.example.medicatrack.databinding.FragmentMainBinding;
 import com.example.medicatrack.viewmodels.MedicamentoViewModel;
+import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 public class MainFragment extends Fragment {
@@ -32,16 +33,33 @@ public class MainFragment extends Fragment {
 
         MedicamentoViewModel viewModel = new ViewModelProvider(requireActivity()).get(MedicamentoViewModel.class);
 
+        binding.viewpager.setUserInputEnabled(false);
+
         binding.viewpager.setAdapter(new MainContentAdapter(this,viewModel));
 
         new TabLayoutMediator(binding.tabLayout, binding.viewpager,
                 (tab, position) -> tab.setText(position == 0 ? "Registro" : "Mis medicamentos")
         ).attach();
 
+        binding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                                                       @Override
+                                                       public void onTabSelected(TabLayout.Tab tab)
+                                                       {
+                                                           if(tab.getPosition() == 1) viewModel.activarFab.setValue(true);
+                                                           else viewModel.activarFab.setValue(false);
+                                                       }
 
+                                                       @Override
+                                                       public void onTabUnselected(TabLayout.Tab tab) {
 
+                                                       }
 
+                                                       @Override
+                                                       public void onTabReselected(TabLayout.Tab tab) {
 
+                                                       }
+                                                   }
+        );
     }
 
     @Override

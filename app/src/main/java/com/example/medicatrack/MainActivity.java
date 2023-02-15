@@ -19,11 +19,16 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.medicatrack.databinding.ActivityMainBinding;
 import com.example.medicatrack.model.Medicamento;
+import com.example.medicatrack.model.Registro;
+import com.example.medicatrack.model.enums.RegistroEstado;
+import com.example.medicatrack.repo.MedicamentoRepository;
+import com.example.medicatrack.repo.RegistroRepository;
 import com.example.medicatrack.viewmodels.MedicamentoViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.example.medicatrack.creacion.CreacionActivity;
 import com.example.medicatrack.repo.persist.database.Database;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,49 +49,31 @@ public class MainActivity extends AppCompatActivity {
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
-/*        //Datos de prueba
-        Medicamento medicamento1 = new Medicamento(1);
-        medicamento1.setNombre("Ibuprofeno");
-        medicamento1.setHora(ZonedDateTime.now());
-        medicamento1.setFrecuencia(Frecuencia.INTERVALO_REGULAR);
-        medicamento1.setDias("Lunes, Sabado, Domingo");
-        medicamento1.setColor("Rojo");
-        medicamento1.setConcentracion(25f);
-        medicamento1.setDescripcion("Hola");
-        medicamento1.setForma("Capsula");
-
-        Medicamento medicamento2 = new Medicamento(2);
-        medicamento2.setNombre("Paracetamol");
-        medicamento2.setHora(ZonedDateTime.now());
-        medicamento2.setFrecuencia(Frecuencia.NECESIDAD);
-        medicamento2.setDias("Lunes, Miercoles, Domingo");
-        medicamento2.setColor("Azul");
-        medicamento2.setConcentracion(2.5f);
-        medicamento2.setDescripcion("Pija");
-        medicamento2.setForma("Crema");
-
-        Medicamento medicamento3 = new Medicamento(2);
-        medicamento3.setNombre("Ibupirac");
-        medicamento3.setHora(ZonedDateTime.now());
-        medicamento3.setFrecuencia(Frecuencia.NECESIDAD);
-        medicamento3.setDias("Lunes, Miercoles, Domingo");
-        medicamento3.setColor("Azul");
-        medicamento3.setConcentracion(2.5f);
-        medicamento3.setDescripcion("Pija");
-        medicamento3.setForma("Crema");*/
-
-/*        MedicamentoRepository repo = MedicamentoRepository.getInstance(this);
-        repo.insert(medicamento1,result -> {});
-        repo.insert(medicamento2,result -> {});
-        repo.insert(medicamento3,result -> {});*/
 
         MedicamentoViewModel viewModel = new ViewModelProvider(this).get(MedicamentoViewModel.class);
-        viewModel.flag.observe(this,integer ->
+
+/*        MedicamentoRepository repo1 = MedicamentoRepository.getInstance(this);
+        Medicamento[] medi = new Medicamento[1];
+        repo1.getAll((result, values) -> {medi[0] = values.get(0);});
+        Registro regi = new Registro();
+        regi.setFecha(ZonedDateTime.now());
+        regi.setEstado(RegistroEstado.PENDIENTE);
+        regi.setMedicamento(medi[0]);
+        RegistroRepository repo2 = RegistroRepository.getInstance(this);
+        repo2.insert(regi,result -> {});*/
+
+        viewModel.activarFab.observe(this, aBoolean ->
         {
-            if(integer == 3) navController.navigate(R.id.action_FirstFragment_to_medicamentoInfoFragment);
-            if(integer > 1) {
-                binding.fab.setVisibility(FloatingActionButton.VISIBLE);
-            } else binding.fab.setVisibility(FloatingActionButton.GONE);
+            if(aBoolean) binding.fab.setVisibility(FloatingActionButton.VISIBLE);
+            else binding.fab.setVisibility(FloatingActionButton.GONE);
+        });
+
+        viewModel.navegarInfo.observe(this,aBoolean ->
+        {
+            if(aBoolean) {
+                navController.navigate(R.id.action_FirstFragment_to_medicamentoInfoFragment);
+                viewModel.navegarInfo.postValue(false);
+            }
         });
 
 
@@ -100,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             Intent data = result.getData();
                             Medicamento a = data.getExtras().getParcelable("Medicamento");
-                            System.out.println("HOLA");
+                            viewModel.nuevoMedicamento.setValue(a);
                         }
                     }
                 });

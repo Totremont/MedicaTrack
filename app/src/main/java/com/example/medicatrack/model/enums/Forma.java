@@ -1,6 +1,7 @@
 package com.example.medicatrack.model.enums;
 
-public enum Forma {
+public enum Forma
+{
     PILDORA,
     REDONDO,
     PASTILLA,

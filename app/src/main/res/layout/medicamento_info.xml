@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
 <androidx.appcompat.widget.LinearLayoutCompat
     android:id="@+id/medicamento_info_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
@@ -33,7 +30,6 @@
         android:layout_marginStart="@dimen/small_dim"
         android:layout_marginEnd="@dimen/small_dim"
         android:layout_marginBottom="@dimen/small_dim"
-        android:backgroundTint="?attr/colorSurface"
         app:cardCornerRadius="@dimen/small_dim">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -75,7 +71,6 @@
                 app:icon="@drawable/icon_delete"
                 />
 
-
             <TextView
                 android:id="@+id/descripcionTitle"
                 android:layout_width="wrap_content"
@@ -104,6 +99,8 @@
                 android:id="@+id/divider"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/default_dim"
+                android:layout_marginEnd="@dimen/default_dim"
                 app:layout_constraintTop_toBottomOf="@id/descripcion"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginTop="@dimen/default_dim"/>
@@ -216,7 +213,7 @@
                 app:layout_constraintStart_toEndOf="@id/icon_consumo"
                 android:layout_marginTop="@dimen/long_dim"
                 android:layout_marginStart="@dimen/small_dim"
-                android:text="Consumo"
+                android:text="Calendario"
                 android:textColor="?attr/colorOnSurface"
                 android:textAppearance="?attr/textAppearanceBody1" />
 
@@ -287,32 +284,10 @@
                 app:layout_constraintTop_toBottomOf="@id/proximoTitle"
                 app:layout_constraintStart_toStartOf="@id/proximoTitle"
                 android:layout_marginTop="@dimen/small_dim"
-                android:text="En 3 días"
+                android:text="Cada día"
                 android:textColor="?attr/colorOnSurface"
                 android:textAppearance="?attr/textAppearanceBodyMedium" />
 
-            <TextView
-                android:id="@+id/calendarioTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/frecuenciaValor"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginTop="@dimen/default_dim"
-                android:layout_marginStart="@dimen/default_dim"
-                android:text="Calendario"
-                android:textColor="?attr/colorOnSurface"
-                android:textAppearance="?attr/textAppearanceBodyLarge" />
-
-            <TextView
-                android:id="@+id/calendarioValor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/calendarioTitle"
-                app:layout_constraintStart_toStartOf="@id/calendarioTitle"
-                android:layout_marginTop="@dimen/small_dim"
-                android:text="Cada 4 días"
-                android:textColor="?attr/colorOnSurface"
-                android:textAppearance="?attr/textAppearanceBodyMedium" />
 
             <TextView
                 android:id="@+id/horaTitle"
@@ -325,16 +300,6 @@
                 android:textColor="?attr/colorOnSurface"
                 android:textAppearance="?attr/textAppearanceBodyLarge" />
 
-            <TextView
-                android:id="@+id/cantidadTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/proximoValor"
-                app:layout_constraintStart_toStartOf="@id/proximoTitle"
-                android:layout_marginTop="@dimen/default_dim"
-                android:text="Cantidad"
-                android:textColor="?attr/colorOnSurface"
-                android:textAppearance="?attr/textAppearanceBodyLarge" />
 
             <TextView
                 android:id="@+id/horaValor"
@@ -348,22 +313,35 @@
                 android:textAppearance="?attr/textAppearanceBodyMedium" />
 
             <TextView
-                android:id="@+id/cantidadValor"
+                android:id="@+id/comienzoTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/cantidadTitle"
-                app:layout_constraintStart_toStartOf="@id/cantidadTitle"
+                app:layout_constraintTop_toBottomOf="@id/frecuenciaValor"
+                app:layout_constraintStart_toStartOf="@id/frecuenciaTitle"
+                android:layout_marginTop="@dimen/default_dim"
+                android:text="Comienzo"
+                android:textColor="?attr/colorOnSurface"
+                android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+
+            <TextView
+                android:id="@+id/comienzoValor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/comienzoTitle"
+                app:layout_constraintStart_toStartOf="@id/comienzoTitle"
                 android:layout_marginTop="@dimen/small_dim"
-                android:text="2"
+                android:text="10:30 AM"
                 android:textColor="?attr/colorOnSurface"
                 android:textAppearance="?attr/textAppearanceBodyMedium" />
+
 
             <TextView
                 android:id="@+id/totalTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/horaValor"
-                app:layout_constraintStart_toStartOf="@id/horaTitle"
+                app:layout_constraintStart_toStartOf="@id/ultimoTitle"
                 android:layout_marginTop="@dimen/default_dim"
                 android:text="Total"
                 android:textColor="?attr/colorOnSurface"
@@ -372,10 +350,11 @@
             <TextView
                 android:id="@+id/totalValor"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="20dp"
                 app:layout_constraintTop_toBottomOf="@id/totalTitle"
                 app:layout_constraintStart_toStartOf="@id/totalTitle"
                 app:layout_constraintEnd_toEndOf="@id/totalTitle"
+                app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginTop="@dimen/small_dim"
                 android:layout_marginEnd="@dimen/default_dim"
                 android:layout_marginStart="@dimen/default_dim"
@@ -386,15 +365,8 @@
                 android:background="?attr/colorTertiaryContainer"
                 android:textAppearance="?attr/textAppearanceBodyMedium" />
 
-
-
-
-
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 
 </androidx.appcompat.widget.LinearLayoutCompat>
-</androidx.core.widget.NestedScrollView>

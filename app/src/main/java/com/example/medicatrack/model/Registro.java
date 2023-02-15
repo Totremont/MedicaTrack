@@ -6,7 +6,7 @@ import java.time.ZonedDateTime;
 
 public class Registro
 {
-    private final int id;
+    private int id;
     private Medicamento medicamento;
     private ZonedDateTime fecha;
     private RegistroEstado estado;
@@ -15,6 +15,8 @@ public class Registro
     {
         this.id = id;
     }
+
+    public Registro(){};
 
     public int getId() {
         return id;

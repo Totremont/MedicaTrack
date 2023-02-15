@@ -1,6 +1,7 @@
 package com.example.medicatrack.model.enums;
 
-public enum Unidad {
+public enum Unidad
+{
     MG,
     MCG,
     G,

@@ -5,6 +5,10 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 /*  Después de leer 500 páginas y vender mi alma en la Deepweb, llegué a la conclusión de que ésta es la mejor forma (fácil y rápida) de representar tiempo y fecha entre Java y SQL.
 
@@ -36,6 +40,9 @@ public class RegistroEntity
     private Long fecha;
     private String estado;
 
+    @ColumnInfo(name="fecha_sin_hora")
+    private Long fechaSinHora;          //Usada internamente solo para comparar en la bd
+
     public void setId(int id){this.id = id;}
 
     public int getId() {
@@ -55,7 +62,18 @@ public class RegistroEntity
     }
 
     public void setFecha(Long fecha) {
+
         this.fecha = fecha;
+        ZonedDateTime fechaSinHora = ZonedDateTime.ofInstant(Instant.ofEpochSecond(fecha),ZoneId.of("America/Argentina/Buenos_Aires"));
+        this.fechaSinHora = fechaSinHora.truncatedTo(ChronoUnit.DAYS).toEpochSecond();
+    }
+
+    public Long getFechaSinHora() {
+        return fechaSinHora;
+    }
+
+    public void setFechaSinHora(Long fechaSinHora) {
+        this.fechaSinHora = fechaSinHora;
     }
 
     public String getEstado() {

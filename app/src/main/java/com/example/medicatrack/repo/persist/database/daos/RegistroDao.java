@@ -22,8 +22,8 @@ public interface RegistroDao
     @Query("SELECT * FROM RegistroEntity WHERE id = :id")
     RegistroEntity getById(int id);
 
-    @Query("SELECT * FROM RegistroEntity WHERE (medicamento_id = :medicamentoId AND estado = :estado)")
-    List<RegistroEntity> getAllFromWhere(int medicamentoId, String estado);
+    @Query("SELECT * FROM RegistroEntity WHERE fecha_sin_hora = :fecha")
+    List<RegistroEntity> getAllFromDate(Long fecha);
 
     @Query("SELECT * FROM RegistroEntity WHERE medicamento_id = :medicamentoId")
     List<RegistroEntity> getAllFrom(int medicamentoId);

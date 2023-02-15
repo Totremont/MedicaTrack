@@ -16,6 +16,8 @@ import com.example.medicatrack.repo.persist.interfaces.MedicamentoDataSource;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MedicamentoRoomDataSource implements MedicamentoDataSource
@@ -76,19 +78,9 @@ public class MedicamentoRoomDataSource implements MedicamentoDataSource
         try
         {
             MedicamentoEntity entity = medicamentoDao.getById(id);
-            Medicamento medicamento = new Medicamento(entity.getId());
-            medicamento.setColor(Color.valueOf(entity.getColor()));
-            medicamento.setNombre(entity.getNombre());
-            medicamento.setFrecuencia(Frecuencia.valueOf(entity.getFrecuencia()));
-            medicamento.setForma(Forma.valueOf(entity.getForma()));
-            medicamento.setConcentracion(entity.getConcentracion());
-            medicamento.setUnidad(Unidad.valueOf(entity.getUnidad()));
-            medicamento.setDias(entity.getDias());
-            medicamento.setFechaInicio(entity.getFechaInicio() != null ? ZonedDateTime.ofInstant(Instant.ofEpochSecond(entity.getFechaInicio()),ZoneId.of("America/Argentina/Buenos_Aires")) : null);
-            medicamento.setHora(entity.getHora() != null ? ZonedDateTime.ofInstant(Instant.ofEpochSecond(entity.getHora()),ZoneId.of("America/Argentina/Buenos_Aires")) : null);
-            medicamento.setDescripcion(entity.getDescripcion());
-
+            Medicamento medicamento = entityToModel(entity);
             callback.onGetById(true,medicamento);
+
         } catch(Exception e)
         {
             callback.onGetById(false,null);
@@ -98,6 +90,34 @@ public class MedicamentoRoomDataSource implements MedicamentoDataSource
     @Override
     public void getAll(CallbacksDataSource.GetAllCallback<Medicamento> callback)
     {
-        //To do
+        try
+        {
+            List<MedicamentoEntity> entities = new ArrayList<>(medicamentoDao.getAll());
+            List<Medicamento> medicamentos = new ArrayList<>();
+            entities.forEach(it ->
+            {
+                medicamentos.add(entityToModel(it));
+            });
+            callback.onGetAll(true,medicamentos);
+        } catch (Exception e)
+        {
+            callback.onGetAll(false,null);
+        }
+    }
+
+    public static Medicamento entityToModel(MedicamentoEntity entity)
+    {
+        Medicamento medicamento = new Medicamento(entity.getId());
+        medicamento.setColor(Color.valueOf(entity.getColor()));
+        medicamento.setNombre(entity.getNombre());
+        medicamento.setFrecuencia(Frecuencia.valueOf(entity.getFrecuencia()));
+        medicamento.setForma(Forma.valueOf(entity.getForma()));
+        medicamento.setConcentracion(entity.getConcentracion());
+        medicamento.setUnidad(Unidad.valueOf(entity.getUnidad()));
+        medicamento.setDias(entity.getDias());
+        medicamento.setFechaInicio(entity.getFechaInicio() != null ? ZonedDateTime.ofInstant(Instant.ofEpochSecond(entity.getFechaInicio()),ZoneId.of("America/Argentina/Buenos_Aires")) : null);
+        medicamento.setHora(entity.getHora() != null ? ZonedDateTime.ofInstant(Instant.ofEpochSecond(entity.getHora()),ZoneId.of("America/Argentina/Buenos_Aires")) : null);
+        medicamento.setDescripcion(entity.getDescripcion());
+        return medicamento;
     }
 }

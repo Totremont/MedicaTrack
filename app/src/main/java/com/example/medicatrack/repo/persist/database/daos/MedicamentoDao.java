@@ -8,6 +8,8 @@ import androidx.room.Update;
 
 import com.example.medicatrack.repo.persist.entities.MedicamentoEntity;
 
+import java.util.List;
+
 
 @Dao
 public interface MedicamentoDao
@@ -22,6 +24,7 @@ public interface MedicamentoDao
     MedicamentoEntity getById(int id);
 
     @Query("SELECT * FROM MedicamentoEntity")
-    MedicamentoEntity getAll();
+    List<MedicamentoEntity> getAll();
+
 
 }

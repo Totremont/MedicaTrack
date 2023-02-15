@@ -8,6 +8,8 @@ import com.example.medicatrack.repo.persist.impl.RegistroRoomDataSource;
 import com.example.medicatrack.repo.persist.interfaces.CallbacksDataSource;
 import com.example.medicatrack.repo.persist.interfaces.RegistroDataSource;
 
+import java.time.ZonedDateTime;
+
 public class RegistroRepository implements RegistroDataSource
 {
     private static RegistroRepository INSTANCE = null;
@@ -55,8 +57,8 @@ public class RegistroRepository implements RegistroDataSource
     }
 
     @Override
-    public void getAllFromWhere(int medicamentoId, RegistroEstado estado, CallbacksDataSource.GetAllCallback<Registro> callback)
+    public void getAllFromDate(ZonedDateTime fecha, CallbacksDataSource.GetAllCallback<Registro> callback)
     {
-        dataSource.getAllFromWhere(medicamentoId, estado, callback);
+        dataSource.getAllFromDate(fecha,callback);
     }
 }

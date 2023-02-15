@@ -8,24 +8,19 @@ import com.example.medicatrack.model.Medicamento;
 
 public class MedicamentoViewModel extends ViewModel
 {
-    private Medicamento medicamento;
-    public MutableLiveData<Integer> flag = new MutableLiveData<Integer>();  //0 Nada, 1 Registro , 2 Medicamento, 3 Info
+    public MutableLiveData<Medicamento> nuevoMedicamento = new MutableLiveData<>();
+
+    public Medicamento medicamentoSeleccionado;
+    public MutableLiveData<Boolean> activarFab = new MutableLiveData<Boolean>();  //0 Nada, 1 Registro , 2 Medicamento, 3 Info
+
+    public MutableLiveData<Boolean> navegarInfo = new MutableLiveData<Boolean>();
+
 
     public MedicamentoViewModel()
     {
-        flag.setValue(0);
+        navegarInfo.setValue(false);
+        activarFab.setValue(false);
     }
-
-    public void insertData(Medicamento medicamento)
-    {
-        this.medicamento = medicamento;
-    }
-
-    public Medicamento getData()
-    {
-        return medicamento;
-    }
-
 
 
 }

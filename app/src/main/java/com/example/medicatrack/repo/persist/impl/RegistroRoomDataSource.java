@@ -15,6 +15,8 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RegistroRoomDataSource implements RegistroDataSource
 {
@@ -44,7 +46,7 @@ public class RegistroRoomDataSource implements RegistroDataSource
         {
             RegistroEntity entity = new RegistroEntity();
             entity.setEstado(registro.getEstado().name());
-            entity.setFecha(registro.getFecha().toInstant().getEpochSecond());
+            entity.setFecha(registro.getFecha().toEpochSecond());
             entity.setMedicaId(registro.getMedicamento().getId());
             try
             {
@@ -61,7 +63,19 @@ public class RegistroRoomDataSource implements RegistroDataSource
     @Override
     public void update(Registro registro, CallbacksDataSource.UpdateCallback callback)
     {
-        //To do
+        try
+        {
+            RegistroEntity entity = new RegistroEntity();
+            entity.setId(registro.getId());
+            entity.setEstado(registro.getEstado().name());
+            entity.setFecha(registro.getFecha().toEpochSecond());
+            entity.setMedicaId(registro.getMedicamento().getId());
+            registroDao.update(entity);
+            callback.onUpdate(true);
+        } catch(Exception e)
+        {
+            callback.onUpdate(false);
+        }
     }
 
     @Override
@@ -70,16 +84,7 @@ public class RegistroRoomDataSource implements RegistroDataSource
         try
         {
             RegistroEntity entity = registroDao.getById(id);
-            Registro registro = new Registro(entity.getId());
-            registro.setEstado(RegistroEstado.valueOf(entity.getEstado()));
-            registro.setFecha(ZonedDateTime.ofInstant(Instant.ofEpochSecond(entity.getFecha()),ZoneId.of("America/Argentina/Buenos_Aires")));
-            final Medicamento[] medicamento = new Medicamento[1];
-            MedicamentoRoomDataSource.getInstance(context).getById(entity.getMedicaId(),(result, value) ->
-            {
-                if(result) medicamento[0] = value;
-                else medicamento[0] = null;
-            });
-            registro.setMedicamento(medicamento[0]);
+            Registro registro = entityToModel(entity,context);
             callback.onGetById(true,registro);
         } catch(Exception e)
         {
@@ -96,12 +101,55 @@ public class RegistroRoomDataSource implements RegistroDataSource
     @Override
     public void getAllFrom(int medicamentoId, CallbacksDataSource.GetAllCallback<Registro> callback)
     {
-        //To do
+        try
+        {
+            List<Registro> registros = new ArrayList<>();
+            List<RegistroEntity> registrosEntities = new ArrayList<>(registroDao.getAllFrom(medicamentoId));
+            registrosEntities.forEach(it ->
+            {
+                registros.add(entityToModel(it,context));
+            });
+
+            callback.onGetAll(true,registros);
+        } catch (Exception e)
+        {
+            callback.onGetAll(false,null);
+        }
     }
 
-    @Override
-    public void getAllFromWhere(int medicamentoId, RegistroEstado estado, CallbacksDataSource.GetAllCallback<Registro> callback)
+    @Override   //Solo evalua que las fechas sean iguales, ignorando la hora
+    public void getAllFromDate(ZonedDateTime fecha, CallbacksDataSource.GetAllCallback<Registro> callback)
     {
-        //To do
+        try
+        {
+            List<Registro> registros = new ArrayList<>();
+            List<RegistroEntity> registrosEntities = new ArrayList<>(registroDao.getAllFromDate(fecha.toEpochSecond()));
+            registrosEntities.forEach(it ->
+            {
+                registros.add(entityToModel(it,context));
+            });
+
+           callback.onGetAll(true,registros);
+        } catch (Exception e)
+        {
+            callback.onGetAll(false,null);
+        }
+    }
+
+    public static Registro entityToModel(RegistroEntity entity, Context context)
+    {
+        Registro registro = new Registro(entity.getId());
+        registro.setEstado(RegistroEstado.valueOf(entity.getEstado()));
+        registro.setFecha(ZonedDateTime.ofInstant(Instant.ofEpochSecond(entity.getFecha()),ZoneId.of("America/Argentina/Buenos_Aires")));
+        final Medicamento[] medicamento = new Medicamento[1];
+        MedicamentoRoomDataSource.getInstance(context).getById(entity.getMedicaId(),(result, value) ->
+        {
+            if(result) medicamento[0] = value;
+            else medicamento[0] = null;
+        });
+        registro.setMedicamento(medicamento[0]);
+
+        return registro;
+
     }
 }

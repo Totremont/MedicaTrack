@@ -4,17 +4,13 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medicatrack.MedicamentoInfoFragment;
-import com.example.medicatrack.R;
 import com.example.medicatrack.databinding.MedicamentoViewlistBinding;
-import com.example.medicatrack.databinding.RegistroViewlistBinding;
 import com.example.medicatrack.model.Medicamento;
-import com.example.medicatrack.model.Registro;
 import com.example.medicatrack.utilities.FechaFormat;
+import com.example.medicatrack.utilities.ResourcesUtility;
 import com.example.medicatrack.viewmodels.MedicamentoViewModel;
 
 import java.util.ArrayList;
@@ -54,9 +50,10 @@ public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoAdapter.
         this.medicamentos.clear();
         this.medicamentos.addAll(medicamentos);
 
-        RegistroAdapter.MedicamentoDifference diferenciador = new RegistroAdapter.MedicamentoDifference(medicamentos,this.medicamentos);
+        MedicamentoAdapter.MedicamentoDifference diferenciador = new MedicamentoAdapter.MedicamentoDifference(medicamentos,this.medicamentos);
         DiffUtil.DiffResult resultado = DiffUtil.calculateDiff(diferenciador);
-        resultado.dispatchUpdatesTo(this);
+        //resultado.dispatchUpdatesTo(this);
+        notifyDataSetChanged();
     }
 
     //Clase Viewholder - se encarga de mostrar los datos en la UI
@@ -73,12 +70,15 @@ public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoAdapter.
         public void bind(Medicamento medicamento, MedicamentoViewModel viewModel)
         {
             binding.nombreTextView.setText(medicamento.getNombre());
-            binding.frecuenciaTextView.setText(medicamento.getFrecuencia().name());
-            //binding.tipoMedicamentoTextView.setText();
+            binding.frecuenciaTextView.setText(ResourcesUtility.enumToText(medicamento.getFrecuencia()));
+            binding.tipoMedicamentoTextView.setText(medicamento.getForma().name() + " de " +
+                    String.format("%.2f", medicamento.getConcentracion()) + " " + medicamento.getUnidad().name().toLowerCase());
+            binding.medicamentoImage.setImageResource(ResourcesUtility.getMedicamentoImage(medicamento));
             binding.getRoot().setOnClickListener(view ->
             {
                 //Abrir
-                viewModel.flag.setValue(3);
+                viewModel.navegarInfo.setValue(true);
+                viewModel.medicamentoSeleccionado = medicamento;
             });
         }
     }

@@ -23,11 +23,11 @@ public class MainContentAdapter extends FragmentStateAdapter
     public Fragment createFragment(int position)
     {
        if(position == 0) {
-           viewModel.flag.setValue(1);
+           viewModel.activarFab.setValue(false);
            return new RegistroFragment();
        }
        else {
-           viewModel.flag.setValue(2);
+           viewModel.activarFab.setValue(true);
            return new MedicamentosFragment();
        }
     }

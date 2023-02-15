@@ -8,6 +8,7 @@
 
              Web para crear colores custom con todas sus variantes: https://m3.material.io/theme-builder#/dynamic [Explicada al final del sitio (2)]
                Elegís tus colores primarios y/o secundarios y la web te muestra un preview de como se vería toda la app. Es buenísimo-->
+
     <item name="colorPrimary">@color/md_theme_light_primary</item>
     <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
     <item name="colorPrimaryContainer">@color/md_theme_light_primaryContainer</item>
@@ -44,7 +45,11 @@
     <style name="ShapeAppearanceOverlay.Medicatrack.cornedShape" parent="">
         <item name="cornerSize">@dimen/small_dim</item>
         <item name="cornerFamily">rounded</item>
-
     </style>
+
+    <style name="Theme.MedicaTrack.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:textStyle">normal</item>
+    </style>
+
 
 </resources>
