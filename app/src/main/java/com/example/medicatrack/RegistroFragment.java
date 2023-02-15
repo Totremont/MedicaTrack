@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medicatrack.adapters.RegistroAdapter;
 import com.example.medicatrack.databinding.FragmentRegistroBinding;
@@ -18,6 +19,7 @@ import com.example.medicatrack.model.enums.RegistroEstado;
 import com.example.medicatrack.repo.MedicamentoRepository;
 import com.example.medicatrack.repo.RegistroRepository;
 import com.example.medicatrack.utilities.FechaFormat;
+import com.example.medicatrack.utilities.ResourcesUtility;
 import com.example.medicatrack.viewmodels.MedicamentoViewModel;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointBackward;
@@ -59,7 +61,7 @@ public class RegistroFragment extends Fragment {
 
         registroRepo = RegistroRepository.getInstance(requireContext());
         medicamentoRepo = MedicamentoRepository.getInstance(requireContext());
-        medicamentoViewModel = new ViewModelProvider(this).get(MedicamentoViewModel.class);
+        medicamentoViewModel = new ViewModelProvider(requireActivity()).get(MedicamentoViewModel.class);
 
         adapter = new RegistroAdapter(requireContext());
 
@@ -130,7 +132,7 @@ public class RegistroFragment extends Fragment {
                 esPasado[0] = false;
                 esFuturo[0] = true;
                 setRegistrosFuturos(fechaSeleccionada[0]);
-                StringBuilder text2 = new StringBuilder().append("Registro del ").append(fechaSeleccionada[0].getDayOfWeek().name().toLowerCase()).append(" ").append(text);
+                StringBuilder text2 = new StringBuilder().append("Registro del ").append(ResourcesUtility.enumToText(fechaSeleccionada[0].getDayOfWeek())).append(" ").append(text);
                 binding.titleText.setText(text2.toString());
                 binding.subtitleText.setText("Medicamentos a consumir");
 
@@ -200,7 +202,7 @@ public class RegistroFragment extends Fragment {
             setRegistrosFuturos(fechaSeleccionada[0]);
         });
 
-        medicamentoViewModel.nuevoMedicamento.observe(getViewLifecycleOwner(),medicamento ->
+        medicamentoViewModel.nuevoMedicamento.observe(requireActivity(),medicamento ->
         {
             if(medicamento != null)
             {
@@ -236,8 +238,14 @@ public class RegistroFragment extends Fragment {
 
         adapter.setData(medicamentos, registros,esPasado,esFuturo);
 
-        if(registros.isEmpty()) binding.layoutVacio.setVisibility(LinearLayoutCompat.VISIBLE);
-        else binding.layoutVacio.setVisibility(LinearLayoutCompat.GONE);
+        if(registros.isEmpty()) {
+            binding.recyclerView.setVisibility(RecyclerView.GONE);
+            binding.layoutVacio.setVisibility(LinearLayoutCompat.VISIBLE);
+        }
+        else {
+            binding.layoutVacio.setVisibility(LinearLayoutCompat.GONE);
+            binding.recyclerView.setVisibility(RecyclerView.VISIBLE);
+        }
 
     }
 
@@ -293,8 +301,14 @@ public class RegistroFragment extends Fragment {
 
         adapter.setData(medicamentos, registros,false,true);
 
-        if(registros.isEmpty()) binding.layoutVacio.setVisibility(LinearLayoutCompat.VISIBLE);
-        else binding.layoutVacio.setVisibility(LinearLayoutCompat.GONE);
+        if(registros.isEmpty()) {
+            binding.recyclerView.setVisibility(RecyclerView.GONE);
+            binding.layoutVacio.setVisibility(LinearLayoutCompat.VISIBLE);
+        }
+        else {
+            binding.layoutVacio.setVisibility(LinearLayoutCompat.GONE);
+            binding.recyclerView.setVisibility(RecyclerView.VISIBLE);
+        }
 
     }
 

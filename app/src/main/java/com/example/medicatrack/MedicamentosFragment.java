@@ -70,14 +70,18 @@ public class MedicamentosFragment extends Fragment
             if(result) medicamentos.addAll(values);
         });
 
-        MedicamentoViewModel viewModel = new ViewModelProvider(requireActivity()).get(MedicamentoViewModel.class);
-
         adapter = new MedicamentoAdapter(viewModel);
 
         adapter.setData(medicamentos);
 
-        if(medicamentos.isEmpty()) binding.layoutVacio.setVisibility(LinearLayoutCompat.VISIBLE);
-        else binding.layoutVacio.setVisibility(LinearLayoutCompat.GONE);
+        if(medicamentos.isEmpty()) {
+            binding.layoutVacio.setVisibility(LinearLayoutCompat.VISIBLE);
+            binding.recyclerView.setVisibility(RecyclerView.GONE);
+        }
+        else {
+            binding.layoutVacio.setVisibility(LinearLayoutCompat.GONE);
+            binding.recyclerView.setVisibility(RecyclerView.VISIBLE);
+        }
 
         binding.recyclerView.setAdapter(adapter);
 
@@ -110,14 +114,23 @@ public class MedicamentosFragment extends Fragment
             setMedicamentos(Frecuencia.NECESIDAD,null);
         });
 
-        viewModel.nuevoMedicamento.observe(getViewLifecycleOwner(),nuevo ->
+        viewModel.nuevoMedicamento.observe(requireActivity(),nuevo ->
         {
-            if(this.medicamentos.contains(nuevo)) return;
-            this.medicamentos.add(nuevo);
-            if(binding.chipTodos.isChecked()) adapter.setData(medicamentos);
-            else if(binding.chipDiaEspecifico.isChecked()) setMedicamentos(Frecuencia.DIAS_ESPECIFICOS,null);
-            else if(binding.chipRegular.isChecked()) setMedicamentos(Frecuencia.INTERVALO_REGULAR,Frecuencia.TODOS_DIAS);
-            else if(binding.chipNecesidad.isChecked()) setMedicamentos(Frecuencia.NECESIDAD,null);
+            if(!this.medicamentos.contains(nuevo)) {
+                this.medicamentos.add(nuevo);
+                if (binding.chipTodos.isChecked())
+                {
+                    binding.layoutVacio.setVisibility(LinearLayoutCompat.GONE);
+                    binding.recyclerView.setVisibility(RecyclerView.VISIBLE);
+                    adapter.setData(medicamentos);
+                }
+                else if (binding.chipDiaEspecifico.isChecked())
+                    setMedicamentos(Frecuencia.DIAS_ESPECIFICOS, null);
+                else if (binding.chipRegular.isChecked())
+                    setMedicamentos(Frecuencia.INTERVALO_REGULAR, Frecuencia.TODOS_DIAS);
+                else if (binding.chipNecesidad.isChecked())
+                    setMedicamentos(Frecuencia.NECESIDAD, null);
+            }
         });
 
 
@@ -135,8 +148,8 @@ public class MedicamentosFragment extends Fragment
             adapter.setData(medicamentosFiltrados);
         }
         if(medicamentosFiltrados.isEmpty()) {
-            binding.layoutVacio.setVisibility(LinearLayoutCompat.VISIBLE);
             binding.recyclerView.setVisibility(RecyclerView.GONE);
+            binding.layoutVacio.setVisibility(LinearLayoutCompat.VISIBLE);
         }
         else {
             binding.layoutVacio.setVisibility(LinearLayoutCompat.GONE);

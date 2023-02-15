@@ -127,11 +127,15 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:visibility="visible"
-        android:layout_margin="@dimen/default_dim"
+        android:layout_marginTop="@dimen/default_dim"
+        android:layout_marginStart="@dimen/default_dim"
+        android:layout_marginEnd="@dimen/default_dim"
+        android:layout_marginBottom="@dimen/small_dim"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@id/divider"
+        app:layout_constraintBottom_toTopOf="@id/necesidad_button"
         app:layout_constraintStart_toStartOf="parent"/>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -142,9 +146,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="@dimen/small_dim"
         android:orientation="vertical"
-        android:gravity="center"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/recyclerView">
+        android:gravity="center"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintTop_toBottomOf="@id/divider">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -165,9 +170,10 @@
 
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/necesidad_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/layout_vacio"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="@dimen/default_dim"
         app:icon="@drawable/icon_add"

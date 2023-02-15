@@ -126,8 +126,8 @@ public class RegistroAdapter extends RecyclerView.Adapter<RegistroAdapter.Regist
             binding.iconMedicamento.setImageResource(ResourcesUtility.getMedicamentoImage(medicamento));
 
             StringBuilder dosis = new StringBuilder();
-            dosis.append("Consumir unidad de ").append(String.format("%.2f", medicamento.getConcentracion())).append(" ")
-                    .append(medicamento.getUnidad().name());
+            dosis.append("Consumir ").append(String.format("%.2f", medicamento.getConcentracion())).append(" ")
+                    .append(ResourcesUtility.enumToText(medicamento.getUnidad()));
 
             binding.dosisTextView.setText(dosis);
 

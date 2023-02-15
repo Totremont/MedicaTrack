@@ -77,9 +77,9 @@ public class MedicamentoInfoFragment extends Fragment {
         binding.iconMedicamento.setImageResource(ResourcesUtility.getMedicamentoImage(medicamento));
         binding.nameText.setText(medicamento.getNombre());
         binding.descripcion.setText(medicamento.getDescripcion() != null ? medicamento.getDescripcion() : "Sin descripción");
-        binding.concentracionValor.setText(String.format("%.2f", medicamento.getConcentracion()) + " " + medicamento.getUnidad().name().toLowerCase());
-        binding.formaValor.setText(medicamento.getForma().name());
-        binding.colorValor.setText(medicamento.getColor().name());
+        binding.concentracionValor.setText(String.format("%.2f", medicamento.getConcentracion()) + " " + ResourcesUtility.enumToText(medicamento.getUnidad()));
+        binding.formaValor.setText(ResourcesUtility.enumToText(medicamento.getForma()));
+        binding.colorValor.setText(ResourcesUtility.enumToText(medicamento.getColor()));
         binding.frecuenciaValor.setText(ResourcesUtility.enumToText(medicamento.getFrecuencia()));
 
         List<Registro> registrosTomados = registros.stream().filter(registro -> registro.getEstado().equals(RegistroEstado.CONFIRMADO)).collect(Collectors.toList());
@@ -118,10 +118,10 @@ public class MedicamentoInfoFragment extends Fragment {
                 StringBuilder texto = new StringBuilder();
                 for(int i = 0; i < diasSemana.size(); i++)
                 {
-                    if(i == 0) texto.append(diasSemana.get(i));
+                    if(i == 0) texto.append(ResourcesUtility.enumToText(diasSemana.get(i)));
                     else
                     {
-                        texto.append("\n").append(diasSemana.get(i));
+                        texto.append("\n").append(ResourcesUtility.enumToText(diasSemana.get(i)));
                     }
                 }
                 binding.proximoValor.setText(texto);
