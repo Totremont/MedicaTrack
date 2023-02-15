@@ -27,6 +27,7 @@ import com.example.medicatrack.model.enums.RegistroEstado;
 import com.example.medicatrack.repo.MedicamentoRepository;
 import com.example.medicatrack.repo.RegistroRepository;
 import com.example.medicatrack.service.MedicamentoService;
+import com.example.medicatrack.utilities.ResourcesUtility;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -99,13 +100,13 @@ public class RegistroReceiver extends BroadcastReceiver {
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                                 .setSmallIcon(R.drawable.pastillas_default)
                                 .setLargeIcon(getImageMed(medicamento, context))
-                                .setContentTitle("TOMA TU MEDICACIÓN")
-                                .setContentText(medicamento.getNombre() + " - " + medicamento.getConcentracion() + " " + (medicamento.getUnidad().name().equals("PORCENTAJE") ? "%" : medicamento.getUnidad().name().toLowerCase()))
+                                .setContentTitle("Recordatorio")
+                                .setContentText("Medicamento: " + medicamento.getNombre() + " - " + medicamento.getConcentracion() + " " + ResourcesUtility.enumToText(medicamento.getUnidad()))
                                 .setAutoCancel(true)
                                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                                 .setContentIntent(pendingIntentAct)
-                                .addAction(R.drawable.pastillas_default, "TOMADO", piBtnTomado)
-                                .addAction(R.drawable.pastillas_default, "NO TOMADO", piBtnNoTomado);
+                                .addAction(R.drawable.pastillas_default, "Tomado", piBtnTomado)
+                                .addAction(R.drawable.pastillas_default, "No tomado", piBtnNoTomado);
                         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
 
                         // ---------------------------
