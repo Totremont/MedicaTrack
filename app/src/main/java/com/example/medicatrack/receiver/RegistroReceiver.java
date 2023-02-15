@@ -64,6 +64,7 @@ public class RegistroReceiver extends BroadcastReceiver {
                         destinoAct.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         destinoAct.setAction(REGISTRAR); // Con esta action se va a preguntar por el intent
                         destinoAct.putExtra("Medicamento", medicamento); // Se pasa el medicamento a registrar
+                        destinoAct.putExtra("Registro", registro); // Se pasa el registro
 
                         PendingIntent pendingIntentAct = PendingIntent.getActivity(context, _id, destinoAct, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
                         // ---------------------

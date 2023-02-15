@@ -33,6 +33,11 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.medicatrack.databinding.ActivityMainBinding;
 import com.example.medicatrack.model.Medicamento;
 
+import com.example.medicatrack.model.Registro;
+import com.example.medicatrack.model.enums.RegistroEstado;
+import com.example.medicatrack.repo.MedicamentoRepository;
+import com.example.medicatrack.repo.RegistroRepository;
+import com.example.medicatrack.utilities.ResourcesUtility;
 import com.example.medicatrack.viewmodels.MedicamentoViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.example.medicatrack.creacion.CreacionActivity;
@@ -101,10 +106,8 @@ public class MainActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
-                    public void onActivityResult(ActivityResult result)
-                    {
-                        if (result.getResultCode() == Activity.RESULT_OK)
-                        {
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
                             Intent data = result.getData();
                             Medicamento a = data.getExtras().getParcelable("Medicamento");
 
@@ -123,7 +126,28 @@ public class MainActivity extends AppCompatActivity {
 
         // Se inicia la actividad producto de la notificacion
         if (getIntent().getAction().equals(RegistroReceiver.REGISTRAR)) {
-            Medicamento med = getIntent().getParcelableExtra("Medicamento");
+            Medicamento medicamento = getIntent().getParcelableExtra("Medicamento");
+            Registro registro = getIntent().getParcelableExtra("Registro");
+            /*
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("REGISTRAR")
+                    .setIcon(ResourcesUtility.getMedicamentoImage(medicamento))
+                    .setMessage("Registrar " + medicamento.getNombre() + " - " + String.format("%.2f", medicamento.getConcentracion()) + " " + ResourcesUtility.enumToText(medicamento.getUnidad()))
+                    .setPositiveButton("TOMAR", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            registro.setEstado(RegistroEstado.CONFIRMADO);
+                            RegistroRepository.getInstance(getApplicationContext()).update(registro, result -> {
+
+                            });
+                        }
+                    })
+                    .setNegativeButton("No tomar", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                        }
+                    });
+            builder.create().show();
+             */
         }
 
     }
@@ -141,16 +165,16 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        if ( (requestCode == PERMISO_NOTIFICACION_INICIAL || requestCode == PERMISO_NOTIFICACION_CFG)
+        if ((requestCode == PERMISO_NOTIFICACION_INICIAL || requestCode == PERMISO_NOTIFICACION_CFG)
                 && grantResults.length > 0 && grantResults[0] == 0) { // Si se concede el permiso
             editor.putBoolean("recibir_not", true);
             editor.commit();
             createNotificationChannel();
-            if(requestCode == PERMISO_NOTIFICACION_CFG)
-                Toast.makeText(getApplicationContext(),"Ahora puede habilitar las notificaciones para el registro de medicamentos.",Toast.LENGTH_LONG).show();
+            if (requestCode == PERMISO_NOTIFICACION_CFG)
+                Toast.makeText(getApplicationContext(), "Ahora puede habilitar las notificaciones para el registro de medicamentos.", Toast.LENGTH_LONG).show();
         }
 
-        if ( (requestCode == PERMISO_NOTIFICACION_INICIAL || requestCode == PERMISO_NOTIFICACION_CFG)
+        if ((requestCode == PERMISO_NOTIFICACION_INICIAL || requestCode == PERMISO_NOTIFICACION_CFG)
                 && grantResults.length > 0
                 && grantResults[0] == -1 && shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
 
@@ -170,10 +194,9 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
             builder.create().show();
-        }
-        else // Request desde settings
-            if(requestCode == PERMISO_NOTIFICACION_CFG && grantResults.length > 0 && grantResults[0] == -1)
-                Toast.makeText(getApplicationContext(),"Primero habilite las notificaciones de MedicaTrack desde el sistema.",Toast.LENGTH_LONG).show();
+        } else // Request desde settings
+            if (requestCode == PERMISO_NOTIFICACION_CFG && grantResults.length > 0 && grantResults[0] == -1)
+                Toast.makeText(getApplicationContext(), "Primero habilite las notificaciones de MedicaTrack desde el sistema.", Toast.LENGTH_LONG).show();
     }
 
     @Override
