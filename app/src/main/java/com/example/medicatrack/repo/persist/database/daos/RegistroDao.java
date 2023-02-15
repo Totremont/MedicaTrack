@@ -24,15 +24,15 @@ public interface RegistroDao
     @Query("SELECT * FROM RegistroEntity WHERE id = :id")
     RegistroEntity getById(UUID id);
 
-    @Query("SELECT * FROM RegistroEntity WHERE fecha_sin_hora = :fecha")
+    @Query("SELECT * FROM RegistroEntity WHERE fecha_sin_hora = :fecha ORDER BY fecha ASC")
     List<RegistroEntity> getAllFromDate(Long fecha);
     @Query("SELECT * FROM RegistroEntity WHERE (medicamento_id = :medicamentoId AND estado = :estado)")
     List<RegistroEntity> getAllFromWhere(UUID medicamentoId, String estado);
 
-    @Query("SELECT * FROM RegistroEntity WHERE medicamento_id = :medicamentoId")
+    @Query("SELECT * FROM RegistroEntity WHERE medicamento_id = :medicamentoId ORDER BY fecha ASC")
     List<RegistroEntity> getAllFrom(UUID medicamentoId);
 
-    @Query("SELECT * FROM RegistroEntity")
+    @Query("SELECT * FROM RegistroEntity ORDER BY fecha ASC")
     List<RegistroEntity> getAll();
 
     @Query("DELETE FROM RegistroEntity WHERE medicamento_id = :medicamentoId")

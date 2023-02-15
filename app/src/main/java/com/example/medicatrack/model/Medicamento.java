@@ -16,6 +16,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Medicamento implements Parcelable, Comparator<Medicamento>
@@ -189,6 +190,19 @@ public class Medicamento implements Parcelable, Comparator<Medicamento>
     public int compare(Medicamento medicamento, Medicamento t1) //0 m == t1, -1 m < t1 , 1 t1 < m
     {
         return FechaFormat.greaterTime(medicamento.getHora(),t1.getHora());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Medicamento that = (Medicamento) o;
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
 

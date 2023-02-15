@@ -8,6 +8,7 @@
     <string name="second_fragment_label">Mis medicamentos</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="medicamento_info">Información</string>
 
     <!-- Strings del fragmento DatosMedicamento -->
     <string name="medicamento">Medicamento</string>

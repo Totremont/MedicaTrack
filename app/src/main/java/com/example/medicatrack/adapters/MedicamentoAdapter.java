@@ -72,11 +72,17 @@ public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoAdapter.
             binding.nombreTextView.setText(medicamento.getNombre());
             binding.frecuenciaTextView.setText(ResourcesUtility.enumToText(medicamento.getFrecuencia()));
             binding.tipoMedicamentoTextView.setText(medicamento.getForma().name() + " de " +
-                    String.format("%.2f", medicamento.getConcentracion()) + " " + medicamento.getUnidad().name().toLowerCase());
+                    String.format("%.2f", medicamento.getConcentracion()) + " " + ResourcesUtility.enumToText(medicamento.getUnidad()));
             binding.medicamentoImage.setImageResource(ResourcesUtility.getMedicamentoImage(medicamento));
             binding.getRoot().setOnClickListener(view ->
             {
                 //Abrir
+                viewModel.navegarInfo.setValue(true);
+                viewModel.medicamentoSeleccionado = medicamento;
+            });
+
+            binding.infoButton.setOnClickListener(view ->
+            {
                 viewModel.navegarInfo.setValue(true);
                 viewModel.medicamentoSeleccionado = medicamento;
             });
