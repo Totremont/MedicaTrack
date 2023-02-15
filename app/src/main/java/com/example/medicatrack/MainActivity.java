@@ -1,9 +1,11 @@
 package com.example.medicatrack;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -12,12 +14,15 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -41,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
 
+    public static final int PERMISO_NOTIFICACION_INICIAL = 0;
+    public static final int PERMISO_NOTIFICACION_CFG = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,14 +56,20 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // ¿Crear canal de notificaciones?
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        if(sharedPreferences.getBoolean("recibir_not", true)){ // Si no existe (defValue == true) o tiene valor true
+        String[] permisos = {Manifest.permission.POST_NOTIFICATIONS};
+        if (!notificationManager.areNotificationsEnabled()) { // Si las notificaciones del celular no estan habilitadas
+            editor.putBoolean("recibir_not", false); // Seteo en falso la preferencia
+            requestPermissions(permisos, MainActivity.PERMISO_NOTIFICACION_INICIAL); // Pido que se habiliten
+        } else if (sharedPreferences.getBoolean("recibir_not", true)) { // si no, pregunto por el valor actual de la preferencia. Si no existe (defValue == true) o tiene valor true, entonces
+            editor.putBoolean("recibir_not", true);
             createNotificationChannel();
-            editor.putBoolean("recibir_not",true);
         }
-
-
+        editor.commit();
+        // -------
 
         setSupportActionBar(binding.toolbar);
 
@@ -68,13 +82,13 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel.activarFab.observe(this, aBoolean ->
         {
-            if(aBoolean) binding.fab.setVisibility(FloatingActionButton.VISIBLE);
+            if (aBoolean) binding.fab.setVisibility(FloatingActionButton.VISIBLE);
             else binding.fab.setVisibility(FloatingActionButton.GONE);
         });
 
-        viewModel.navegarInfo.observe(this,aBoolean ->
+        viewModel.navegarInfo.observe(this, aBoolean ->
         {
-            if(aBoolean) {
+            if (aBoolean) {
                 navController.navigate(R.id.action_global_medicamentoInfoFragment);
                 viewModel.navegarInfo.postValue(false);
             }
@@ -106,8 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Se inicia la actividad producto de la notificacion
-        if(getIntent().getAction().equals(RegistroReceiver.REGISTRAR))
-        {
+        if (getIntent().getAction().equals(RegistroReceiver.REGISTRAR)) {
             Medicamento med = getIntent().getParcelableExtra("Medicamento");
         }
 
@@ -118,6 +131,45 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        if ( (requestCode == PERMISO_NOTIFICACION_INICIAL || requestCode == PERMISO_NOTIFICACION_CFG)
+                && grantResults.length > 0 && grantResults[0] == 0) { // Si se concede el permiso
+            editor.putBoolean("recibir_not", true);
+            editor.commit();
+            createNotificationChannel();
+        }
+
+        if ( (requestCode == PERMISO_NOTIFICACION_INICIAL || requestCode == PERMISO_NOTIFICACION_CFG)
+                && grantResults.length > 0
+                && grantResults[0] == -1 && shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+
+            // si no se concede el permiso, pregunto si es necesario pedirle racionalmente que lo conceda
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("NOTIFICACIONES")
+                    .setMessage("Para poder notificarte a la hora de tomar tus medicamentos, es necesario que concedas los permisos de notificación.")
+                    .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, MainActivity.PERMISO_NOTIFICACION_INICIAL);
+                        }
+                    })
+                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                        }
+                    });
+            builder.create().show();
+        }
+        else // Request desde settings
+            if(requestCode == PERMISO_NOTIFICACION_CFG && grantResults.length > 0 && grantResults[0] == -1)
+                Toast.makeText(getApplicationContext(),"Primero habilite las notificaciones de MedicaTrack desde el sistema.",Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -133,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
             navController.navigate(R.id.action_global_settingsFragment);
             return true;
         }
-        if(id == R.id.action_map){
+        if (id == R.id.action_map) {
 
             // Buscar por farmacias cercanas
             Uri gmmIntentUri = Uri.parse("geo:0,0?q=Farmacias cercanas");

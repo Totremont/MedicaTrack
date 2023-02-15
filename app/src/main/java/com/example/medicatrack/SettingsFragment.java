@@ -1,12 +1,8 @@
 package com.example.medicatrack;
 
-import static android.content.Context.MODE_APPEND;
-import static android.content.Context.MODE_PRIVATE;
-
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,11 +10,14 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceManager;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
+private NotificationManagerCompat  notificationManager;
+
+
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -36,21 +35,23 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         super.onViewCreated(view, savedInstanceState);
 
+        String[] permisos = {Manifest.permission.POST_NOTIFICATIONS};
+
         Preference recibirNotificaciones = findPreference("recibir_not");
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-
-        NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager = NotificationManagerCompat.from(getContext());
 
         recibirNotificaciones.setOnPreferenceChangeListener((Preference preference, Object newValue) -> {
             if (newValue.equals(true)) {
-                createNotificationChannel();
-                sharedPreferences.edit().putBoolean("recibir_not",true);
-                return true;
+                if (!notificationManager.areNotificationsEnabled()){ // Si las notificaciones no estan habiltitadas
+                    getActivity().requestPermissions(permisos, MainActivity.PERMISO_NOTIFICACION_CFG); // Solicito
+                    return false; // y no cambio la preferencia de valor
+                }
+                else createNotificationChannel(); // si estan, creo el canal de notificaciones
+                return true; // cambio la pref de valor
             } else {
                 // Eliminar canal de notificaciones de medicamentos
                 notificationManager.deleteNotificationChannel(getString(R.string.channel_id));
-                sharedPreferences.edit().putBoolean("recibir_not",false);
                 return true;
             }
         });

@@ -5,7 +5,7 @@
         <SwitchPreferenceCompat
             app:key="recibir_not"
             app:summary="@string/summary_not"
-            app:title="@string/notificaciones"
+            app:title="@string/title_not"
             app:defaultValue="true"/>
 
     </PreferenceCategory>

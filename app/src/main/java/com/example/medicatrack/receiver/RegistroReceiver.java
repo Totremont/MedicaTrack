@@ -1,6 +1,7 @@
 package com.example.medicatrack.receiver;
 
 import android.Manifest;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -142,7 +142,8 @@ public class MedicamentoInfoFragment extends Fragment {
         binding.deleteButton.setOnClickListener(v -> {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("¿Desea eliminar el medicamento y todos sus registros?")
+            builder.setTitle("ELIMINAR")
+                    .setMessage("¿Desea eliminar el medicamento y todos sus registros?")
                     .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             MedicamentoRepository.getInstance(getContext()).delete(medicamento, result -> {
