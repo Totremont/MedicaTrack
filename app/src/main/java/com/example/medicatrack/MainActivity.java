@@ -3,7 +3,9 @@ package com.example.medicatrack;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -16,6 +18,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
 
 import com.example.medicatrack.creacion.CreacionActivity;
 import com.example.medicatrack.databinding.ActivityMainBinding;
@@ -38,7 +42,14 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        createNotificationChannel();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if(sharedPreferences.getBoolean("recibir_not", true)){ // Si no existe (defValue == true) o tiene valor true
+            createNotificationChannel();
+            editor.putBoolean("recibir_not",true);
+        }
+
+
 
         setSupportActionBar(binding.toolbar);
 
@@ -91,6 +102,12 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+            navController.navigate(R.id.action_global_settingsFragment);
+            return true;
+        }
+        if(id == R.id.action_map){
+
             return true;
         }
 
