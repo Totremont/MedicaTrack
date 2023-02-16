@@ -275,9 +275,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
-        app:backgroundTint="@color/design_default_color_primary"
         app:srcCompat="@drawable/baseline_chevron_right_24"
-        app:tint="@color/white"
         android:tooltipText="@string/siguiente"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

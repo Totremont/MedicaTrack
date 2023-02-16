@@ -118,8 +118,6 @@
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
         android:tooltipText="@string/listo"
-        app:backgroundTint="@color/design_default_color_primary"
-        app:srcCompat="@drawable/baseline_check_24"
-        app:tint="@color/white" />
+        app:srcCompat="@drawable/baseline_check_24" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
