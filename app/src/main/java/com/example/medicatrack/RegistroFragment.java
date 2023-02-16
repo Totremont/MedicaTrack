@@ -253,35 +253,7 @@ public class RegistroFragment extends Fragment {
         //Boton en necesidad
         binding.necesidadButton.setOnClickListener(view1 ->
         {
-/*            ArrayList<Medicamento> todos = new ArrayList<>();
-            ArrayList<Medicamento> seleccionables = new ArrayList<>();
-            ArrayList<Medicamento> noSeleccionables = new ArrayList<>();
-            ArrayList<Registro> registrosHoy = new ArrayList<>();
-            todos.clear();
-            registrosHoy.clear();
-            seleccionables.clear();
-            noSeleccionables.clear();
-            medicamentoRepo.getAll((result, values) ->
-            {
-                if(result) todos.addAll(values);
-            });
 
-            registroRepo.getAllFromDate(ahora,(result, values) ->
-            {
-                if(result) registrosHoy.addAll(values);
-            });
-
-            noSeleccionables = (ArrayList<Medicamento>) registrosHoy.stream().map(Registro::getMedicamento).collect(Collectors.toList());
-            for (Medicamento it : todos)
-            {
-                if(!noSeleccionables.contains(it)) seleccionables.add(it);
-            }
-            if(seleccionables.isEmpty())
-            {
-                Toast toast = Toast.makeText(requireActivity(), "Ya has registrado todos los medicamentos el día de hoy", Toast.LENGTH_SHORT);
-                toast.show();
-                return;
-            }*/
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
             ArrayList<Medicamento> todos = new ArrayList<>();
             todos.clear();
