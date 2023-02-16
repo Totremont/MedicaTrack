@@ -74,7 +74,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="none"
-                    android:text="Todos los dias" />
+                    android:text="Todos los dias"
+                    android:textColor="?attr/colorOnSurface"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
