@@ -91,6 +91,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="@id/dosis_textView"
         app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="?attr/colorOnSurfaceVariant"
         android:text="No tomado"
         />
 

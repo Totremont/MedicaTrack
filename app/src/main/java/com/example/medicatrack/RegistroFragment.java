@@ -19,6 +19,7 @@ import com.example.medicatrack.adapters.RegistroAdapter;
 import com.example.medicatrack.databinding.FragmentRegistroBinding;
 import com.example.medicatrack.model.Medicamento;
 import com.example.medicatrack.model.Registro;
+import com.example.medicatrack.model.enums.Frecuencia;
 import com.example.medicatrack.model.enums.RegistroEstado;
 import com.example.medicatrack.repo.MedicamentoRepository;
 import com.example.medicatrack.repo.RegistroRepository;
@@ -348,14 +349,14 @@ public class RegistroFragment extends Fragment {
         });
         for (Medicamento medicamento : aux)
         {
-            if(medicamento.getFechaInicio().isAfter(fecha)) continue;
+            if(medicamento.getFrecuencia().equals(Frecuencia.NECESIDAD) || medicamento.getFechaInicio().isAfter(fecha)) continue;
             switch (medicamento.getFrecuencia())
             {
                 case INTERVALO_REGULAR:
                     long dias = ChronoUnit.DAYS.between(medicamento.getFechaInicio(),fecha);
                     if(dias % Integer.parseInt(medicamento.getDias()) == 0)
                     {
-                        Registro registro = new Registro();
+                        Registro registro = new Registro(UUID.randomUUID());
                         registro.setMedicamento(medicamento);
                         registro.setEstado(RegistroEstado.PENDIENTE);
                         registro.setFecha(medicamento.getHora());
@@ -367,7 +368,7 @@ public class RegistroFragment extends Fragment {
                     List<DayOfWeek> diasSemana = FechaFormat.toDiasSemana(medicamento.getDias());
                     if(diasSemana.contains(fecha.getDayOfWeek()))
                     {
-                        Registro registro = new Registro();
+                        Registro registro = new Registro(UUID.randomUUID());
                         registro.setMedicamento(medicamento);
                         registro.setEstado(RegistroEstado.PENDIENTE);
                         registro.setFecha(medicamento.getHora());
@@ -376,7 +377,7 @@ public class RegistroFragment extends Fragment {
                     break;
 
                 case TODOS_DIAS:
-                    Registro registro = new Registro();
+                    Registro registro = new Registro(UUID.randomUUID());
                     registro.setMedicamento(medicamento);
                     registro.setEstado(RegistroEstado.PENDIENTE);
                     registro.setFecha(medicamento.getHora());

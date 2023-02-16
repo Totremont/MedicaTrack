@@ -10,6 +10,7 @@ import com.example.medicatrack.model.enums.RegistroEstado;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Registro implements Parcelable
@@ -86,4 +87,16 @@ public class Registro implements Parcelable
         }
     };
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Registro registro = (Registro) o;
+        return id.equals(registro.getId()) && medicamento.equals(registro.getMedicamento()) && fecha.equals(registro.getFecha()) && estado.equals(registro.getEstado());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

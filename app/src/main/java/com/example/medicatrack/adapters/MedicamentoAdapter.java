@@ -5,26 +5,30 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medicatrack.databinding.MedicamentoViewlistBinding;
 import com.example.medicatrack.model.Medicamento;
+import com.example.medicatrack.model.Registro;
 import com.example.medicatrack.utilities.FechaFormat;
 import com.example.medicatrack.utilities.ResourcesUtility;
 import com.example.medicatrack.viewmodels.MedicamentoViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoAdapter.MedicamentoViewHolder>
+public class MedicamentoAdapter extends ListAdapter<Medicamento,MedicamentoAdapter.MedicamentoViewHolder>
 {
 
-    private final ArrayList<Medicamento> medicamentos = new ArrayList<>();
     private MedicamentoViewModel viewModel;
 
     public MedicamentoAdapter(MedicamentoViewModel viewModel)
     {
+        super(new MedicamentoDifference());
         this.viewModel = viewModel;
     }
+
 
     @NonNull
     @Override
@@ -36,24 +40,18 @@ public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoAdapter.
     @Override
     public void onBindViewHolder(@NonNull MedicamentoAdapter.MedicamentoViewHolder holder, int position)
     {
-        holder.bind(medicamentos.get(position),viewModel);
+        holder.bind(getCurrentList().get(position),viewModel);
     }
 
     @Override
     public int getItemCount()
     {
-        return medicamentos.size();
+        return getCurrentList().size();
     }
 
     public void setData(ArrayList<Medicamento> medicamentos)
     {
-        this.medicamentos.clear();
-        this.medicamentos.addAll(medicamentos);
-
-        MedicamentoAdapter.MedicamentoDifference diferenciador = new MedicamentoAdapter.MedicamentoDifference(medicamentos,this.medicamentos);
-        DiffUtil.DiffResult resultado = DiffUtil.calculateDiff(diferenciador);
-        //resultado.dispatchUpdatesTo(this);
-        notifyDataSetChanged();
+        submitList((List<Medicamento>) medicamentos.clone());
     }
 
     //Clase Viewholder - se encarga de mostrar los datos en la UI
@@ -91,44 +89,19 @@ public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoAdapter.
 
 
     //Obtiene las diferencias entre 2 listas distintas
-    public static class MedicamentoDifference extends DiffUtil.Callback
+    public static class MedicamentoDifference extends DiffUtil.ItemCallback<Medicamento>
     {
 
-        private final ArrayList<Medicamento> listaNueva = new ArrayList<>();
-        private final ArrayList<Medicamento> listaVieja = new ArrayList<>();
-
-        public MedicamentoDifference(ArrayList<Medicamento> listaNueva, ArrayList<Medicamento> listaVieja)
-        {
-            this.listaNueva.addAll(listaNueva);
-            this.listaVieja.addAll(listaVieja);
+        @Override
+        public boolean areItemsTheSame(@NonNull Medicamento oldItem, @NonNull Medicamento newItem) {
+            return oldItem.equals(newItem);
         }
 
         @Override
-        public int getOldListSize() {
-            return listaVieja.size();
-        }
-
-        @Override
-        public int getNewListSize() {
-            return listaNueva.size();
-        }
-
-        @Override       //Son las 2 instancias iguales?
-        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition)
-        {
-            Medicamento viejo = listaVieja.get(oldItemPosition);
-            Medicamento nuevo = listaNueva.get(newItemPosition);
-            return nuevo.equals(viejo);
-        }
-
-        @Override       //Tienen las 2 instancias los mismos datos? (visualmente en la UI)
-        public boolean areContentsTheSame(int oldItemPosition, int newItemPosition)
-        {
-            Medicamento viejo = listaVieja.get(oldItemPosition);
-            Medicamento nuevo = listaNueva.get(newItemPosition);
-            //Cantidad pastillas y registro blablabla
-            return FechaFormat.formattedHora(viejo.getHora()).equals(FechaFormat.formattedHora(nuevo.getHora()))
-                    && viejo.getNombre().equals(nuevo.getNombre()) && viejo.getConcentracion() == nuevo.getConcentracion();
+        public boolean areContentsTheSame(@NonNull Medicamento oldItem, @NonNull Medicamento newItem) {
+            return oldItem.equals(newItem) || (oldItem.getNombre().equals(newItem.getNombre())
+                    && oldItem.getFrecuencia().equals(newItem.getFrecuencia())
+                    && oldItem.getConcentracion() == newItem.getConcentracion() && oldItem.getForma().equals(newItem.getForma()));
         }
     }
 }

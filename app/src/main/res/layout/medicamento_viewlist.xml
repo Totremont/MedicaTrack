@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:backgroundTint="?attr/colorSurface"
+    style="@style/Widget.Material3.CardView.Elevated"
     android:layout_margin="@dimen/default_dim"
     app:cardCornerRadius="@dimen/small_dim"
     android:elevation="@dimen/small_dim"
@@ -45,6 +45,7 @@
             android:gravity="center_vertical"
             android:layout_marginStart="@dimen/small_dim"
             android:layout_marginTop="@dimen/small_dim"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textAppearance="?attr/textAppearanceBodySmall"
             app:drawableStartCompat="@drawable/icon_date" />
 
@@ -55,6 +56,7 @@
             android:text="Cápsula 600 mg"
             android:layout_marginTop="@dimen/small_dim"
             android:layout_marginStart="@dimen/small_dim"
+            android:textColor="?attr/colorOnSurface"
             android:textAppearance="?attr/textAppearanceBodySmall"/>
 
         <com.google.android.material.button.MaterialButton

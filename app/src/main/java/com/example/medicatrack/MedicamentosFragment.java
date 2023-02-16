@@ -1,7 +1,13 @@
 package com.example.medicatrack;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.LinearLayoutCompat;
@@ -17,11 +23,13 @@ import android.view.ViewGroup;
 
 import com.example.medicatrack.adapters.MedicamentoAdapter;
 import com.example.medicatrack.adapters.RegistroAdapter;
+import com.example.medicatrack.creacion.CreacionActivity;
 import com.example.medicatrack.databinding.FragmentMedicamentosBinding;
 import com.example.medicatrack.model.Medicamento;
 import com.example.medicatrack.model.enums.Frecuencia;
 import com.example.medicatrack.repo.MedicamentoRepository;
 import com.example.medicatrack.viewmodels.MedicamentoViewModel;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,14 +44,26 @@ public class MedicamentosFragment extends Fragment
     private MedicamentoAdapter adapter;
     private final ArrayList<Medicamento> medicamentos = new ArrayList<>();
     private final ArrayList<Medicamento> medicamentosFiltrados = new ArrayList<>();
-
     private MedicamentoViewModel viewModel;
+
+    private ActivityResultLauncher<Intent> creacionLauncher;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        creacionLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result ->
+                {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        Medicamento a = data.getExtras().getParcelable("Medicamento");
+
+                        viewModel.nuevoMedicamento.setValue(a);
+                        Snackbar.make(binding.getRoot(), "Se ha agregado un nuevo medicamento", Snackbar.LENGTH_LONG).show();
+                    }
+                });
     }
 
     @Override
@@ -112,6 +132,12 @@ public class MedicamentosFragment extends Fragment
         binding.chipNecesidad.setOnClickListener(view1 ->
         {
             setMedicamentos(Frecuencia.NECESIDAD,null);
+        });
+
+        binding.agregarButton.setOnClickListener(view1 ->
+        {
+            Intent intent = new Intent(requireActivity(), CreacionActivity.class);
+            creacionLauncher.launch(intent);
         });
 
         viewModel.nuevoMedicamento.observe(requireActivity(),nuevo ->

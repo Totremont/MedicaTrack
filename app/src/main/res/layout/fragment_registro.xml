@@ -22,6 +22,7 @@
         >
 
         <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group"
             android:layout_width="wrap_content"
             app:selectionRequired="true"
             app:singleSelection="true"
@@ -83,15 +84,15 @@
 
     </HorizontalScrollView>
 
-<ImageView
-    android:id="@+id/icon_alarm"
-    android:layout_width="40dp"
-    android:layout_height="40dp"
-    app:layout_constraintTop_toBottomOf="@id/scrollView"
-    app:layout_constraintStart_toStartOf="parent"
-    android:layout_marginTop="@dimen/default_dim"
-    android:layout_marginStart="@dimen/default_dim"
-    android:src="@drawable/icon_alarm"/>
+    <ImageView
+        android:id="@+id/icon_alarm"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintTop_toBottomOf="@id/scrollView"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/default_dim"
+        android:layout_marginStart="@dimen/default_dim"
+        android:src="@drawable/icon_alarm"/>
 
     <TextView
         android:id="@+id/titleText"
@@ -100,7 +101,7 @@
         app:layout_constraintTop_toBottomOf="@id/scrollView"
         app:layout_constraintStart_toEndOf="@id/icon_alarm"
         android:layout_marginTop="@dimen/default_dim"
-        android:textColor="?attr/colorOnSurface"
+        android:textColor="?attr/colorOnBackground"
         android:layout_marginStart="@dimen/small_dim"
         android:text="Registro del día"
         android:textAppearance="?attr/textAppearanceBodyLarge"
@@ -113,7 +114,7 @@
         app:layout_constraintTop_toBottomOf="@id/titleText"
         app:layout_constraintStart_toEndOf="@id/icon_alarm"
         android:layout_marginStart="@dimen/small_dim"
-        android:textColor="?attr/colorOnSurface"
+        android:textColor="?attr/colorOnSurfaceVariant"
         android:text="Medicamentos a consumir"
         android:textAppearance="?attr/textAppearanceBodyMedium"
         />
@@ -148,25 +149,25 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/small_dim"
         android:orientation="vertical"
         android:visibility="gone"
         android:gravity="center"
-        app:layout_constraintVertical_bias="0"
-        app:layout_constraintTop_toBottomOf="@id/divider">
+        app:layout_constraintTop_toBottomOf="@id/scrollView"
+        app:layout_constraintBottom_toBottomOf="parent" >
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/icon_cactus"/>
+            android:src="@drawable/icon_cat"/>
 
         <TextView
             android:id="@+id/vacioText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nada que mostrar"
+            android:text="Sr. Gato no encontró ningún registro"
             android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?attr/colorOnBackground"
             />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

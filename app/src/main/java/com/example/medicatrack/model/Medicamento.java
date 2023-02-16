@@ -197,7 +197,52 @@ public class Medicamento implements Parcelable, Comparator<Medicamento>
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Medicamento that = (Medicamento) o;
-        return id.equals(that.id);
+        boolean comparacion = this.id.equals(that.getId()) && this.nombre.equals(that.getNombre()) && this.unidad.equals(that.getUnidad()) && this.forma.equals(that.getForma())
+                && this.color.equals(that.getColor()) && this.frecuencia.equals(that.getFrecuencia()) && this.concentracion == that.getConcentracion();
+
+        if(this.dias != null && that.getDias() != null)
+        {
+            comparacion = comparacion && this.dias.equals(that.getDias());
+        }
+        if(this.fechaInicio != null && that.getFechaInicio() != null)
+        {
+            comparacion = comparacion && this.fechaInicio.equals(that.getFechaInicio());
+        }
+        if(this.hora != null && that.getHora() != null)
+        {
+            comparacion = comparacion && this.hora.equals(that.getHora());
+        }
+        if(this.descripcion != null && that.getDescripcion() != null)
+        {
+            comparacion = comparacion && this.descripcion.equals(that.getDescripcion());
+        }
+        return comparacion;
+    }
+
+    public boolean sameContent(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Medicamento that = (Medicamento) o;
+        boolean comparacion = this.nombre.equals(that.getNombre()) && this.unidad.equals(that.getUnidad()) && this.forma.equals(that.getForma())
+                && this.color.equals(that.getColor()) && this.frecuencia.equals(that.getFrecuencia()) && this.concentracion == that.getConcentracion();
+
+        if(this.dias != null && that.getDias() != null)
+        {
+            comparacion = comparacion && this.dias.equals(that.getDias());
+        }
+        if(this.fechaInicio != null && that.getFechaInicio() != null)
+        {
+            comparacion = comparacion && this.fechaInicio.equals(that.getFechaInicio());
+        }
+        if(this.hora != null && that.getHora() != null)
+        {
+            comparacion = comparacion && this.hora.equals(that.getHora());
+        }
+        if(this.descripcion != null && that.getDescripcion() != null)
+        {
+            comparacion = comparacion && this.descripcion.equals(that.getDescripcion());
+        }
+        return comparacion;
     }
 
     @Override

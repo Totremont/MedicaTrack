@@ -20,6 +20,7 @@
         >
 
         <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:selectionRequired="true"
@@ -81,24 +82,45 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/small_dim"
         android:orientation="vertical"
         android:gravity="center"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/recyclerView">
+        app:layout_constraintTop_toBottomOf="@id/scrollView"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/icon_cactus"/>
+            android:src="@drawable/icon_dog"/>
 
         <TextView
             android:id="@+id/vacioText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nada que mostrar"
+            android:text="Clifford no encontró medicamentos"
             android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?attr/colorOnBackground"
+            />
+
+        <TextView
+            android:id="@+id/sugerenciaText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_dim"
+            android:text="Empieza por"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?attr/colorOnBackground"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/agregar_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            style="?attr/borderlessButtonStyle"
+            android:text="Añadir un medicamento"
             />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
