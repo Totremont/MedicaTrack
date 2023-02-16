@@ -44,6 +44,7 @@
             android:layout_marginTop="3dp"
             android:text="Redonda"
             android:textSize="14sp"
+            android:textColor="?attr/colorOnSurface"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/imgCard" />
