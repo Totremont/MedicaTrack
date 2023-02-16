@@ -1,12 +1,12 @@
-<PreferenceScreen
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory app:title="@string/notificaciones">
 
         <SwitchPreferenceCompat
             app:key="recibir_not"
             app:summary="@string/summary_not"
-            app:title="@string/title_not"
+            android:title="@string/title_not"
             app:defaultValue="true"/>
 
     </PreferenceCategory>
@@ -16,7 +16,7 @@
     <SwitchPreferenceCompat
         app:key="switch_tema"
         app:summary="Activar tema oscuro"
-        app:title="Colores"
+        android:title="Colores"
         app:defaultValue="false"/>
 
     </PreferenceCategory>

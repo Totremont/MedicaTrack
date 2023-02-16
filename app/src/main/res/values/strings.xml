@@ -11,7 +11,7 @@
     <string name="medicamento_info">Información</string>
 
     <!-- Strings del fragmento DatosMedicamento -->
-    <string name="medicamento">Medicamento</string>
+    <string name="medicamento">Crear medicamento</string>
     <string name="nombre_med">Nombre del medicamento</string>
     <string name="agregar_nombre">Agrega el nombre</string>
     <string name="agregar_concentracion">Agrega la concentración</string>
