@@ -207,6 +207,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="none"
                     android:text="unidad"
+                    android:textColor="?attr/colorOnSurface"
                     android:imeOptions="actionDone"/>
 
             </com.google.android.material.textfield.TextInputLayout>

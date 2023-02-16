@@ -78,6 +78,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (sharedPreferences.getBoolean("recibir_not", true)) { // si no, pregunto por el valor actual de la preferencia. Si no existe (defValue == true) o tiene valor true, entonces
             editor.putBoolean("recibir_not", true);
             createNotificationChannel();
+        } else {
+            notificationManager.deleteNotificationChannel(getString(R.string.channel_id));
+            editor.putBoolean("recibir_not", false); // De mas
         }
         editor.commit();
         // -------
