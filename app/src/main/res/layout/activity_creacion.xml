@@ -16,7 +16,6 @@
             android:id="@+id/toolbarCreacion"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
             app:titleCentered="true"
             app:subtitleCentered="true"/>
 

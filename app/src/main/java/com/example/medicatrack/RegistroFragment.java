@@ -85,6 +85,7 @@ public class RegistroFragment extends Fragment {
         final boolean[] esPasado = new boolean[1];
         final boolean[] esFuturo = new boolean[1];
 
+        binding.chipHoy.setChecked(true);
         setNuevosRegistros(ahora,esPasado[0],esFuturo[0]);
 
         binding.recyclerView.setAdapter(adapter);
@@ -252,7 +253,7 @@ public class RegistroFragment extends Fragment {
         //Boton en necesidad
         binding.necesidadButton.setOnClickListener(view1 ->
         {
-            ArrayList<Medicamento> todos = new ArrayList<>();
+/*            ArrayList<Medicamento> todos = new ArrayList<>();
             ArrayList<Medicamento> seleccionables = new ArrayList<>();
             ArrayList<Medicamento> noSeleccionables = new ArrayList<>();
             ArrayList<Registro> registrosHoy = new ArrayList<>();
@@ -280,18 +281,26 @@ public class RegistroFragment extends Fragment {
                 Toast toast = Toast.makeText(requireActivity(), "Ya has registrado todos los medicamentos el día de hoy", Toast.LENGTH_SHORT);
                 toast.show();
                 return;
-            }
+            }*/
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
+            ArrayList<Medicamento> todos = new ArrayList<>();
+            todos.clear();
+
+            medicamentoRepo.getAll((result, values) ->
+            {
+                if(result) todos.addAll(values);
+            });
+
             int[] pos = new int[1];
             pos[0] = 0;
 
             builder.setTitle("Selecciona un medicamento");
             builder.setIcon(R.drawable.icon_medication);
 
-            CharSequence[] lista = new CharSequence[seleccionables.size()];
+            CharSequence[] lista = new CharSequence[todos.size()];
             for(int i = 0; i< lista.length; i++)
             {
-                lista[i] = seleccionables.get(i).getNombre();
+                lista[i] = todos.get(i).getNombre();
             }
 
             builder.setSingleChoiceItems(lista,0,(dialogInterface, i) -> {pos[0] = i;});
@@ -307,7 +316,7 @@ public class RegistroFragment extends Fragment {
                         dialog.dismiss();
                     } else
                     {
-                        Medicamento seleccionado = seleccionables.get(pos[0]);
+                        Medicamento seleccionado = todos.get(pos[0]);
                         Registro nuevoRegistro = new Registro(UUID.randomUUID());
                         nuevoRegistro.setEstado(RegistroEstado.CONFIRMADO);
                         nuevoRegistro.setMedicamento(seleccionado);
@@ -339,10 +348,10 @@ public class RegistroFragment extends Fragment {
             if(result) registros.addAll(values);
         });
 
-        medicamentos.clear();
-        medicamentos.addAll(registros.stream().map(Registro::getMedicamento).collect(Collectors.toList()));
+/*        medicamentos.clear();
+        medicamentos.addAll(registros.stream().map(Registro::getMedicamento).collect(Collectors.toList()));*/
 
-        adapter.setData(medicamentos, registros,esPasado,esFuturo);
+        adapter.setData(registros,esPasado,esFuturo);
 
         if(registros.isEmpty()) {
             binding.recyclerView.setVisibility(RecyclerView.GONE);
@@ -360,6 +369,7 @@ public class RegistroFragment extends Fragment {
         medicamentos.clear();
         List<Medicamento> aux = new ArrayList<>();
         registros.clear();
+
         medicamentoRepo.getAll((result, values) ->
         {
             if(result) aux.addAll(values);
@@ -376,7 +386,7 @@ public class RegistroFragment extends Fragment {
                         Registro registro = new Registro();
                         registro.setMedicamento(medicamento);
                         registro.setEstado(RegistroEstado.PENDIENTE);
-                        registro.setFecha(fecha);
+                        registro.setFecha(medicamento.getHora());
                         registros.add(registro);
                     }
                     break;
@@ -388,7 +398,7 @@ public class RegistroFragment extends Fragment {
                         Registro registro = new Registro();
                         registro.setMedicamento(medicamento);
                         registro.setEstado(RegistroEstado.PENDIENTE);
-                        registro.setFecha(fecha);
+                        registro.setFecha(medicamento.getHora());
                         registros.add(registro);
                     }
                     break;
@@ -397,15 +407,13 @@ public class RegistroFragment extends Fragment {
                     Registro registro = new Registro();
                     registro.setMedicamento(medicamento);
                     registro.setEstado(RegistroEstado.PENDIENTE);
-                    registro.setFecha(fecha);
+                    registro.setFecha(medicamento.getHora());
                     registros.add(registro);
                     break;
             }
         }
 
-        medicamentos.addAll(registros.stream().map(Registro::getMedicamento).collect(Collectors.toList()));
-
-        adapter.setData(medicamentos, registros,false,true);
+        adapter.setData(registros,false,true);
 
         if(registros.isEmpty()) {
             binding.recyclerView.setVisibility(RecyclerView.GONE);
