@@ -34,7 +34,7 @@
         <item>Todos los días</item>
         <item>En intervalos regulares</item>
         <item>En días de la semana específicos</item>
-        <item>Según se necesite</item>
+        <item>Según necesidad</item>
     </string-array>
 
     <string-array name="dias">

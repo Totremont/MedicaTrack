@@ -39,6 +39,7 @@
                 android:text="@string/cuando_tomar"
                 android:textSize="24sp"
                 android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imgDefault" />
@@ -52,6 +53,7 @@
                 android:text="@string/frecuencia"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtCuandoTomar" />
@@ -63,7 +65,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
-                app:boxBackgroundColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/txtForma">
@@ -118,8 +119,6 @@
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
         android:tooltipText="@string/listo"
-        app:backgroundTint="@color/design_default_color_primary"
-        app:srcCompat="@drawable/baseline_check_24"
-        app:tint="@color/white" />
+        app:srcCompat="@drawable/baseline_check_24" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
