@@ -20,20 +20,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:src="@drawable/icon_pending_checked"
-            android:elevation="@dimen/extra_small_dim"
             android:layout_margin="@dimen/small_dim"
             android:layout_width="match_parent"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Medicatrack.cornedShape"
             android:background="?attr/colorSurfaceVariant"
-            android:layout_height="160dp"/>
+            android:layout_height="200dp"/>
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/small_dim"
             android:layout_marginEnd="@dimen/small_dim"
             android:layout_marginBottom="@dimen/small_dim"
-            style="@style/Widget.Material3.CardView.Elevated"
+            android:backgroundTint="?attr/colorSurface"
+            android:elevation="@dimen/small_dim"
             app:cardCornerRadius="@dimen/small_dim">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -372,7 +372,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.core.widget.NestedScrollView>

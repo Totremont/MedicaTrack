@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.UiModeManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,12 +24,14 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.preference.Preference;
 
 
 import com.example.medicatrack.databinding.ActivityMainBinding;
@@ -77,6 +81,19 @@ public class MainActivity extends AppCompatActivity {
         }
         editor.commit();
         // -------
+
+        Boolean temaOscuro = sharedPreferences.getBoolean("switch_tema",false);
+        if(temaOscuro)
+        {
+            UiModeManager uiManager = (UiModeManager) this.getSystemService(Context.UI_MODE_SERVICE);
+            if(BuildConfig.VERSION_CODE > 30) uiManager.setNightMode(UiModeManager.MODE_NIGHT_YES);
+            else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else
+        {
+            UiModeManager uiManager = (UiModeManager) this.getSystemService(Context.UI_MODE_SERVICE);
+            if(BuildConfig.VERSION_CODE > 30) uiManager.setNightMode(UiModeManager.MODE_NIGHT_NO);
+            else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
 
         setSupportActionBar(binding.toolbar);
 

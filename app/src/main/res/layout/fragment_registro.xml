@@ -152,6 +152,7 @@
         android:orientation="vertical"
         android:visibility="gone"
         android:gravity="center"
+        android:layout_marginBottom="@dimen/long_dim"
         app:layout_constraintTop_toBottomOf="@id/scrollView"
         app:layout_constraintBottom_toBottomOf="parent" >
 

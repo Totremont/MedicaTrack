@@ -3,6 +3,8 @@ package com.example.medicatrack;
 import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.UiModeManager;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,6 +12,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -38,6 +41,7 @@ private NotificationManagerCompat  notificationManager;
         String[] permisos = {Manifest.permission.POST_NOTIFICATIONS};
 
         Preference recibirNotificaciones = findPreference("recibir_not");
+        Preference tema = findPreference("switch_tema");
 
         notificationManager = NotificationManagerCompat.from(getContext());
 
@@ -52,6 +56,24 @@ private NotificationManagerCompat  notificationManager;
             } else {
                 // Eliminar canal de notificaciones de medicamentos
                 notificationManager.deleteNotificationChannel(getString(R.string.channel_id));
+                return true;
+            }
+        });
+
+        tema.setOnPreferenceChangeListener((preference, newValue) ->
+        {
+            if(newValue.equals(true))
+            {
+                UiModeManager uiManager = (UiModeManager) getContext().getSystemService(Context.UI_MODE_SERVICE);
+                if(BuildConfig.VERSION_CODE > 30) uiManager.setNightMode(UiModeManager.MODE_NIGHT_YES);
+                else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                return true;
+            }
+            else
+            {
+                UiModeManager uiManager = (UiModeManager) getContext().getSystemService(Context.UI_MODE_SERVICE);
+                if(BuildConfig.VERSION_CODE > 30) uiManager.setNightMode(UiModeManager.MODE_NIGHT_NO);
+                else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 return true;
             }
         });
