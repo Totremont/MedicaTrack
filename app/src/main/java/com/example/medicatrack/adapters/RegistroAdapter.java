@@ -26,6 +26,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -34,9 +35,7 @@ import java.util.UUID;
 public class RegistroAdapter extends RecyclerView.Adapter<RegistroAdapter.RegistroViewHolder>
 {
 
-    private final ArrayList<Medicamento> medicamentos = new ArrayList<>();  //Todos los medicamentos del dia
-
-    private final SortedMap<UUID,Registro> registros = new TreeMap<UUID,Registro>();  //Registros de aquellos tomados, no tomados y pendientes
+    private List<Registro> registros = new ArrayList<>();
 
     //Si esta seleccionado un chip
     private boolean esPasado = false;
@@ -60,35 +59,23 @@ public class RegistroAdapter extends RecyclerView.Adapter<RegistroAdapter.Regist
     @Override
     public void onBindViewHolder(@NonNull RegistroViewHolder holder, int position)
     {
-        holder.bind(medicamentos.get(position),
-                registros.get(medicamentos.get(position).getId()),
+        holder.bind(registros.get(position),
                 esPasado,esFuturo);
     }
 
     @Override
     public int getItemCount()
     {
-        return medicamentos.size();
+        return registros.size();
     }
 
-    public void setData(ArrayList<Medicamento> medicamentos, ArrayList<Registro> registros, boolean esPasado, boolean esFuturo)
+    public void setData(ArrayList<Registro> registros, boolean esPasado, boolean esFuturo)
     {
-/*        MedicamentoDifference diferenciador = new MedicamentoDifference(medicamentos,this.medicamentos,this.registros,registros);
-        DiffUtil.DiffResult resultado = DiffUtil.calculateDiff(diferenciador);*/
-
-        this.medicamentos.clear();
-        this.medicamentos.addAll(medicamentos);
         this.registros.clear();
+        this.registros.addAll(registros);
 
         this.esFuturo = esFuturo;
         this.esPasado = esPasado;
-
-        //resultado.dispatchUpdatesTo(this);
-
-        registros.forEach(it ->
-        {
-            this.registros.put(it.getMedicamento().getId(), it);
-        });
 
         notifyDataSetChanged();
 
@@ -111,8 +98,9 @@ public class RegistroAdapter extends RecyclerView.Adapter<RegistroAdapter.Regist
             registroRepo = RegistroRepository.getInstance(context);
         }
 
-        public void bind(Medicamento medicamento, Registro registro, boolean esPasado, boolean esFuturo)
+        public void bind(Registro registro, boolean esPasado, boolean esFuturo)
         {
+            Medicamento medicamento = registro.getMedicamento();
             binding.tiempoTextView.setText(FechaFormat.formattedHora(registro.getFecha()));
 
             if(registro.getEstado().equals(RegistroEstado.PENDIENTE))
@@ -211,7 +199,7 @@ public class RegistroAdapter extends RecyclerView.Adapter<RegistroAdapter.Regist
     }
 
 
-    //Obtiene las diferencias entre 2 listas distintas
+    /*//Obtiene las diferencias entre 2 listas distintas
     public static class MedicamentoDifference extends DiffUtil.Callback
     {
         private final SortedMap<UUID,Registro> registrosViejos = new TreeMap<UUID,Registro>();
@@ -257,5 +245,5 @@ public class RegistroAdapter extends RecyclerView.Adapter<RegistroAdapter.Regist
                     && viejo.getNombre().equals(nuevo.getNombre()) && viejo.getConcentracion() == nuevo.getConcentracion()
                     && viejo.getForma().equals(nuevo.getForma()) && viejo.getColor().equals(nuevo.getColor()) && registroViejo.getEstado().equals(registroNuevo.getEstado());
         }
-    }
+    }*/
 }
