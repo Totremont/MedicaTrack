@@ -180,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
 
                     });
             builder.create().show();
+            getIntent().setAction("INTENT_TRATADO"); // Cambiar la accion del intent, porque si se recrea la actividad (modo oscuro on/off), vuelve a ejecutar esta parte
         }
 
     }

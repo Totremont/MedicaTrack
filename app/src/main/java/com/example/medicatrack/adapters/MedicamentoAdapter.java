@@ -69,7 +69,7 @@ public class MedicamentoAdapter extends ListAdapter<Medicamento,MedicamentoAdapt
         {
             binding.nombreTextView.setText(medicamento.getNombre());
             binding.frecuenciaTextView.setText(ResourcesUtility.enumToText(medicamento.getFrecuencia()));
-            binding.tipoMedicamentoTextView.setText(medicamento.getForma().name() + " de " +
+            binding.tipoMedicamentoTextView.setText(ResourcesUtility.enumToText(medicamento.getForma()) + " de " +
                     String.format("%.2f", medicamento.getConcentracion()) + " " + ResourcesUtility.enumToText(medicamento.getUnidad()));
             binding.medicamentoImage.setImageResource(ResourcesUtility.getMedicamentoImage(medicamento));
             binding.getRoot().setOnClickListener(view ->
