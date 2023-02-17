@@ -73,9 +73,11 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
         String[] permisos = {Manifest.permission.POST_NOTIFICATIONS};
+
         if (!notificationManager.areNotificationsEnabled()) { // Si las notificaciones del celular no estan habilitadas
             editor.putBoolean("recibir_not", false); // Seteo en falso la preferencia
             requestPermissions(permisos, MainActivity.PERMISO_NOTIFICACION_INICIAL); // Pido que se habiliten
+
         } else if (sharedPreferences.getBoolean("recibir_not", true)) { // si no, pregunto por el valor actual de la preferencia. Si no existe (defValue == true) o tiene valor true, entonces
             editor.putBoolean("recibir_not", true);
             createNotificationChannel();
@@ -153,11 +155,12 @@ public class MainActivity extends AppCompatActivity {
             Medicamento medicamento = getIntent().getParcelableExtra("Medicamento");
             Registro registro = getIntent().getParcelableExtra("Registro");
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("REGISTRAR")
+            builder.setTitle("Alerta")
                     .setIcon(ResourcesUtility.getMedicamentoImage(medicamento))
-                    .setMessage("Registrar " + medicamento.getNombre() + " - " + String.format("%.2f", medicamento.getConcentracion()) + " " + ResourcesUtility.enumToText(medicamento.getUnidad()))
-                    .setPositiveButton("TOMAR", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
+                    .setMessage("¿Has consumido: " + medicamento.getNombre() + " • " + String.format("%.2f", medicamento.getConcentracion()) + " " + ResourcesUtility.enumToText(medicamento.getUnidad()) + "?")
+                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id)
+                        {
                             registro.setEstado(RegistroEstado.CONFIRMADO);
                             RegistroRepository.getInstance(getApplicationContext()).update(registro, result -> {
 
@@ -165,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                             registroViewModel.nuevoRegistro.setValue(registro);
                         }
                     })
-                    .setNegativeButton("No tomar", new DialogInterface.OnClickListener() {
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id)
                         {
                             registro.setEstado(RegistroEstado.CANCELADO);
@@ -270,14 +273,15 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void createNotificationChannel() {
+    private void createNotificationChannel()
+    {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name);
             String description = getString(R.string.channel_description);
             String CHANNEL_ID = getString(R.string.channel_id);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
             // Register the channel with the system; you can't change the importance

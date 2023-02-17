@@ -278,7 +278,7 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
             RegistroRepository.getInstance(getContext()).insert(registro, result -> {});
 
             // Alarma
-            pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(), UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(), UUID.randomUUID().hashCode(), intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
@@ -309,7 +309,7 @@ public class FrecuenciaMedicamentoFragment extends Fragment {
 
                 // Alarma
                 int _rand = UUID.randomUUID().hashCode();
-                pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(), _rand, intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(), _rand, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 

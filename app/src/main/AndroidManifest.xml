@@ -19,6 +19,7 @@
         android:theme="@style/Theme.MedicaTrack"
         tools:targetApi="33">
         <service android:name=".service.MedicamentoService"/>
+
         <activity
             android:name=".creacion.CreacionActivity"
             android:exported="false"

@@ -39,6 +39,7 @@ public class RegistroReceiver extends BroadcastReceiver {
     public static final String NOTIFICAR = "com.example.medicatrack.receiver.EVENTO_NOTIFICAR";
     public static final String REGISTRAR_TOMADO = "com.example.medicatrack.receiver.EVENTO_REGISTRAR_TOMADO";
     public static final String REGISTRAR_NO_TOMADO = "com.example.medicatrack.receiver.EVENTO_REGISTRAR_NO_TOMADO";
+
     public static final String REGISTRAR_PENDIENTE = "com.example.medicatrack.receiver.EVENTO_REGISTRAR_PENDIENTE";
 
     public static final String REGISTRAR = "com.example.medicatrack.receiver.EVENTO_REGISTRAR";
@@ -51,14 +52,21 @@ public class RegistroReceiver extends BroadcastReceiver {
         switch (intent.getAction()) {
             case NOTIFICAR: {
                 Medicamento medicamento = intent.getExtras().getParcelable("Medicamento");
+
                 // Ver si esta en la bd (no fue eliminado)
                 MedicamentoRepository.getInstance(context).getById(medicamento.getId(), ((result, value) -> {
-                    if(result && value != null){
+                    if(result && value != null)
+                    {
                         Registro registro = intent.getExtras().getParcelable("Registro");
 
                         // Notificacion
                         String CHANNEL_ID = context.getString(R.string.channel_id);
                         int _id = UUID.randomUUID().hashCode();
+
+                        int requestCodeActivity = UUID.randomUUID().hashCode();
+                        int requestCodeServiceTomado = UUID.randomUUID().hashCode();
+                        int requestCodeServiceNoTomado = UUID.randomUUID().hashCode();
+                        //Todos los requestCode deben ser distintos para que no se sobreescriban mutuamente
 
                         // Actividad de destino
                         Intent destinoAct = new Intent(context, MainActivity.class); // CAMBIAR POR LA QUE HAYA CREADO EL EZE
@@ -67,7 +75,7 @@ public class RegistroReceiver extends BroadcastReceiver {
                         destinoAct.putExtra("Medicamento", medicamento); // Se pasa el medicamento a registrar
                         destinoAct.putExtra("Registro", registro); // Se pasa el registro
 
-                        PendingIntent pendingIntentAct = PendingIntent.getActivity(context, _id, destinoAct, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                        PendingIntent pendingIntentAct = PendingIntent.getActivity(context, requestCodeActivity, destinoAct, PendingIntent.FLAG_IMMUTABLE);
                         // ---------------------
 
                         // MODIFICO EL REGISTRO PENDIENTE A POSPUESTO (todavia no se confirmo ni cancelo)
@@ -84,7 +92,7 @@ public class RegistroReceiver extends BroadcastReceiver {
                         btnTomado.putExtra("Registro", registro); // Se pasa el registro creado
 
                         btnTomado.putExtra("idNot", _id);
-                        PendingIntent piBtnTomado = PendingIntent.getService(context, _id, btnTomado, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                        PendingIntent piBtnTomado = PendingIntent.getService(context, requestCodeServiceTomado, btnTomado, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
                         // ---------------------
 
                         // Para el boton de NO TOMADO
@@ -93,7 +101,7 @@ public class RegistroReceiver extends BroadcastReceiver {
                         btnNoTomado.putExtra("Registro", registro); // Se pasa el registro creado
 
                         btnNoTomado.putExtra("idNot", _id);
-                        PendingIntent piBtnNoTomado = PendingIntent.getService(context, _id, btnNoTomado, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                        PendingIntent piBtnNoTomado = PendingIntent.getService(context, requestCodeServiceNoTomado, btnNoTomado, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
                         // ---------------------
 
                         // Crear notificacion
@@ -101,7 +109,7 @@ public class RegistroReceiver extends BroadcastReceiver {
                                 .setSmallIcon(R.drawable.pastillas_default)
                                 .setLargeIcon(getImageMed(medicamento, context))
                                 .setContentTitle("Recordatorio")
-                                .setContentText("Medicamento: " + medicamento.getNombre() + " - " + medicamento.getConcentracion() + " " + ResourcesUtility.enumToText(medicamento.getUnidad()))
+                                .setContentText("Debes consumir: " + medicamento.getNombre() + " • " + medicamento.getConcentracion() + " " + ResourcesUtility.enumToText(medicamento.getUnidad()))
                                 .setAutoCancel(true)
                                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                                 .setContentIntent(pendingIntentAct)
@@ -134,7 +142,8 @@ public class RegistroReceiver extends BroadcastReceiver {
 
             }
             break;
-            case Intent.ACTION_BOOT_COMPLETED: {
+            case Intent.ACTION_BOOT_COMPLETED:
+            {
                 // Cuando el dispositivo se termine de encender, hay que reestablecer todas las alarmas (porque se borran)
                 // TODO
             }
