@@ -81,8 +81,11 @@ public class RegistroRoomDataSource implements RegistroDataSource
         try
         {
             RegistroEntity entity = registroDao.getById(id);
-            Registro registro = entityToModel(entity,context);
-            callback.onGetById(true,registro);
+            if(entity == null) callback.onGetById(true, null);
+            else {
+                Registro registro = entityToModel(entity,context);
+                callback.onGetById(true,registro);
+            }
         } catch(Exception e)
         {
             callback.onGetById(false,null);

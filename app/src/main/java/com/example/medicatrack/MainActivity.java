@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                             Medicamento a = data.getExtras().getParcelable("Medicamento");
 
                             viewModel.nuevoMedicamento.setValue(a);
-                            Snackbar.make(binding.getRoot(), "Se ha agregado un nuevo medicamento", Snackbar.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Se ha agregado un nuevo medicamento.", Toast.LENGTH_LONG).show();
                         }
                     }
                 });

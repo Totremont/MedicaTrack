@@ -69,9 +69,11 @@ public class MedicamentoRoomDataSource implements MedicamentoDataSource
         try
         {
             MedicamentoEntity entity = medicamentoDao.getById(id);
-            Medicamento medicamento = entityToModel(entity);
-            callback.onGetById(true,medicamento);
-
+            if(entity == null) callback.onGetById(true, null);
+            else {
+                Medicamento medicamento = entityToModel(entity);
+                callback.onGetById(true, medicamento);
+            }
         } catch(Exception e)
         {
             callback.onGetById(false,null);

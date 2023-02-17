@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.SharedElementCallback;
@@ -148,7 +149,10 @@ public class MedicamentoInfoFragment extends Fragment {
                         public void onClick(DialogInterface dialog, int id) {
                             MedicamentoRepository.getInstance(getContext()).delete(medicamento, result -> {
                                 // Medicamento eliminado
-                                if(result) System.out.println("Medicamento " + medicamento.getNombre() + " eliminado.");
+                                if(result){
+                                    System.out.println("Medicamento " + medicamento.getNombre() + " eliminado.");
+                                    Toast.makeText(getActivity().getApplicationContext(), "Se ha eliminado el medicamento.", Toast.LENGTH_LONG).show();
+                                }
                             });
                             RegistroRepository.getInstance(getContext()).deleteAllFromWhere(medicamento.getId(), result -> {
                                 // Registros del medicamento eliminados
